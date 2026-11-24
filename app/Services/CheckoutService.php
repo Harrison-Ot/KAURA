@@ -9,6 +9,7 @@ use App\Models\SaleItem;
 use App\Models\SaleRequest;
 use App\Models\ShopSettings;
 use App\Models\User;
+use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -68,7 +69,7 @@ class CheckoutService
             if (! $settings->mpesa_number || ($data['expected_receiving_number'] ?? null) !== $settings->mpesa_number) {
                 throw ValidationException::withMessages(['expected_receiving_number' => 'The receiving number is missing or changed. Refresh and confirm where the customer paid; do not attach an old code to a different number.']);
             }
-            if (Payment::query()->where('mpesa_code', $data['mpesa_code'])->exists() || DB::table('cash_outflows')->where('payment_reference', $data['mpesa_code'])->exists()) {
+            if (MpesaCodes::exists($data['mpesa_code'])) {
                 throw ValidationException::withMessages(['mpesa_code' => 'This M-Pesa code is already recorded. Check the existing payment.']);
             }
         }
@@ -91,6 +92,20 @@ class CheckoutService
         $credit = $approval === null ? 0 : $approval->credit_minor;
         $total = $gross - $discount;
         $deposit = $total - $credit;
+        $retained = null;
+        $redeemed = 0;
+        if (! empty($data['customer_credit_id'])) {
+            abort_unless($actor->role === 'owner', 403);
+            if ($manual || $customer === null) {
+                throw ValidationException::withMessages(['customer_credit_id' => 'Retained credit requires a selected customer and cash checkout for any remaining payment.']);
+            }
+            $retained = DB::table('customer_credits')->where('id', $data['customer_credit_id'])->lockForUpdate()->first();
+            $redeemed = StockArithmetic::totalAmount((string) ($data['retained_credit_amount'] ?? ''), 'retained_credit_amount');
+            if ($retained === null || (int) $retained->customer_id !== $customer->id || $redeemed <= 0 || $redeemed > (int) $retained->remaining_amount_minor || $redeemed > $deposit) {
+                throw ValidationException::withMessages(['retained_credit_amount' => 'Use a positive amount within this customer?s available retained credit and the sale deposit.']);
+            }
+            $deposit -= $redeemed;
+        }
         if ($credit > 0 && $customer !== null) {
             SaleApprovalService::checkLimit($customer, $manual ? $total : $credit);
         }
@@ -144,7 +159,7 @@ class CheckoutService
             ]);
         }
         $receivableId = null;
-        if ($manual || $credit > 0) {
+        if ($manual || $credit > 0 || $redeemed > 0) {
             $remaining = $manual ? $total : $credit;
             StockArithmetic::total((int) DB::table('receivables')->sum('remaining_amount_minor'), $remaining, 'items');
             $receivableId = DB::table('receivables')->insertGetId([
@@ -157,7 +172,7 @@ class CheckoutService
                 $customer->save();
             }
         }
-        if ($deposit > 0 || $credit === 0) {
+        if ($deposit > 0 || ($credit === 0 && $redeemed === 0)) {
             $payment = Payment::create([
                 'reference' => 'PAY-'.Str::ulid(), 'posting_key' => 'checkout:'.$sale->id, 'sale_id' => $sale->id, 'customer_id' => $customer?->id,
                 'handled_by' => $actor->id, 'method' => $method, 'status' => $manual ? 'pending' : 'verified', 'amount_minor' => $deposit, 'business_date' => $day, 'received_at' => now(), 'purpose' => 'checkout',
@@ -167,6 +182,11 @@ class CheckoutService
             if ($receivableId !== null && ! $manual && $deposit > 0) {
                 DB::table('payment_allocations')->insert(['payment_id' => $payment->id, 'receivable_id' => $receivableId, 'amount_minor' => $deposit, 'actor_id' => $actor->id, 'created_at' => now()]);
             }
+        }
+        if ($retained !== null) {
+            DB::table('customer_credits')->where('id', $retained->id)->decrement('remaining_amount_minor', $redeemed);
+            DB::table('shop_operations')->insert(['submission_key' => (string) Str::uuid(), 'payload_hash' => $hash, 'source_key' => 'checkout:'.$sale->id, 'kind' => 'credit_redemption', 'sale_id' => $sale->id, 'customer_id' => $customer->id, 'receivable_id' => $receivableId, 'customer_credit_id' => $retained->id, 'amount_minor' => $redeemed, 'cash_amount_minor' => 0, 'debt_amount_minor' => $redeemed, 'actor_id' => $actor->id, 'reason' => 'Owner applied retained customer credit at checkout.', 'business_date' => $day, 'created_at' => now()]);
+            AccessAudit::record('customer_credit.redeemed', $actor, null, 'Owner applied retained credit at checkout.', ['remaining_minor' => $retained->remaining_amount_minor], ['used_minor' => $redeemed, 'sale_id' => $sale->id], 'customer_credit', (int) $retained->id);
         }
         if ($approval !== null) {
             $approval->fill(['status' => 'consumed', 'consumed_sale_id' => $sale->id])->save();

@@ -22,13 +22,22 @@ class FinancialReportService
             $sales = DB::table('sales')->where('status', 'posted')->whereBetween('business_date', [$from, $to])->get(['sold_by', 'gross_minor', 'discount_minor', 'total_minor', 'cost_total_minor']);
             $payments = DB::table('payments')->whereBetween('business_date', [$from, $to])->get(['handled_by', 'method', 'status', 'purpose', 'amount_minor']);
             $outflows = DB::table('cash_outflows')->whereBetween('effective_on', [$from, $to])->get(['actor_id', 'kind', 'category', 'payment_method', 'amount_minor']);
+            $operations = DB::table('shop_operations')->leftJoin('cash_outflows', 'cash_outflows.id', '=', 'shop_operations.cash_outflow_id')->whereBetween('business_date', [$from, $to])->select('shop_operations.*', 'cash_outflows.kind as original_kind')->get();
+            $returns = $operations->where('kind', 'return');
+            $reversals = $operations->whereIn('kind', ['outflow_reversal', 'receipt_reversal']);
+            $cashAdjustments = $this->sum($operations->where('payment_method', 'cash'), 'cash_amount_minor');
             $confirmed = $payments->where('status', 'verified');
             $cashIn = $this->sum($confirmed->where('method', 'cash'), 'amount_minor');
-            $cashOut = $this->sum($outflows->where('payment_method', 'cash'), 'amount_minor');
-            $netSales = $this->sum($sales, 'total_minor');
+            $cashOut = $this->sum($outflows->where('payment_method', 'cash'), 'amount_minor')->plus($cashAdjustments);
+            $netSales = $this->sum($sales, 'total_minor')->minus($this->sum($returns, 'amount_minor'));
             $knownCost = $this->sum($sales->whereNotNull('cost_total_minor'), 'cost_total_minor');
             $unknownCostSales = $sales->whereNull('cost_total_minor')->count();
             $expenses = $this->sum($outflows->where('kind', 'expense'), 'amount_minor');
+            $expenses = $expenses->minus($this->sum($reversals->where('original_kind', 'expense'), 'amount_minor'));
+            $returnedCosts = DB::table('shop_operation_items')->join('shop_operations', 'shop_operations.id', '=', 'shop_operation_items.shop_operation_id')->where('shop_operations.kind', 'return')->where('shop_operation_items.disposition', 'restock')->whereBetween('shop_operations.business_date', [$from, $to])->get(['shop_operation_items.cost_minor']);
+            $knownCost = $knownCost->minus($this->sum($returnedCosts->whereNotNull('cost_minor'), 'cost_minor'));
+            $unknownCostSales += $returnedCosts->whereNull('cost_minor')->count();
+            $refunds = $this->sum($outflows->where('kind', 'refund'), 'amount_minor')->plus($this->sum($returns, 'cash_amount_minor'));
             $summary = [
                 'sale_count' => $sales->count(), 'gross_sales' => $this->money($this->sum($sales, 'gross_minor')), 'discounts' => $this->money($this->sum($sales, 'discount_minor')), 'net_sales' => $this->money($netSales),
                 'known_sale_cost' => $this->money($knownCost), 'unknown_cost_sales' => $unknownCostSales,
@@ -41,19 +50,21 @@ class FinancialReportService
                 'mpesa_disputed' => $this->money($this->sum($payments->where('method', 'manual_mpesa')->where('status', 'disputed'), 'amount_minor')),
                 'confirmed_instalments' => $this->money($this->sum($confirmed->where('purpose', 'instalment'), 'amount_minor')),
                 'operating_expenses' => $this->money($expenses), 'stock_purchases' => $this->money($this->sum($outflows->where('kind', 'stock_purchase'), 'amount_minor')),
-                'owner_withdrawals' => $this->money($this->sum($outflows->where('kind', 'owner_withdrawal'), 'amount_minor')),
-                'refunds' => $this->money($this->sum($outflows->where('kind', 'refund'), 'amount_minor')),
-                'net_collections_after_refunds' => $this->money($this->sum($confirmed, 'amount_minor')->minus($this->sum($outflows->where('kind', 'refund'), 'amount_minor'))),
-                'cash_out' => $this->money($cashOut), 'mpesa_out' => $this->money($this->sum($outflows->where('payment_method', 'mpesa'), 'amount_minor')),
+                'owner_withdrawals' => $this->money($this->sum($outflows->where('kind', 'owner_withdrawal'), 'amount_minor')->minus($this->sum($reversals->where('original_kind', 'owner_withdrawal'), 'amount_minor'))),
+                'returns' => $this->money($this->sum($returns, 'amount_minor')), 'debt_write_offs' => $this->money($this->sum($operations->where('kind', 'write_off'), 'amount_minor')), 'credit_offsets' => $this->money($this->sum($operations->whereIn('kind', ['credit_offset', 'credit_redemption']), 'amount_minor')),
+                'refunds' => $this->money($refunds),
+                'net_collections_after_refunds' => $this->money($this->sum($confirmed, 'amount_minor')->minus($refunds)),
+                'cash_out' => $this->money($cashOut), 'mpesa_out' => $this->money($this->sum($outflows->where('payment_method', 'mpesa'), 'amount_minor')->plus($this->sum($operations->where('payment_method', 'mpesa'), 'cash_amount_minor'))),
                 'net_cash_movement' => $this->money($cashIn->minus($cashOut)),
             ];
-            $employeeIds = $sales->pluck('sold_by')->merge($payments->pluck('handled_by'))->merge($outflows->pluck('actor_id'))->unique();
-            $employees = User::query()->whereIn('id', $employeeIds)->orderBy('name')->get()->map(function (User $user) use ($sales, $payments, $outflows): array {
+            $summary['stock_purchases'] = $this->money($this->sum($outflows->where('kind', 'stock_purchase'), 'amount_minor')->minus($this->sum($reversals->where('original_kind', 'stock_purchase'), 'amount_minor')));
+            $employeeIds = $sales->pluck('sold_by')->merge($payments->pluck('handled_by'))->merge($outflows->pluck('actor_id'))->merge($operations->pluck('actor_id'))->unique();
+            $employees = User::query()->whereIn('id', $employeeIds)->orderBy('name')->get()->map(function (User $user) use ($sales, $payments, $outflows, $operations): array {
                 $ownSales = $sales->where('sold_by', $user->id);
                 $ownPayments = $payments->where('handled_by', $user->id);
                 $ownOutflows = $outflows->where('actor_id', $user->id);
                 $cash = $this->sum($ownPayments->where('status', 'verified')->where('method', 'cash'), 'amount_minor');
-                $out = $this->sum($ownOutflows->where('payment_method', 'cash'), 'amount_minor');
+                $out = $this->sum($ownOutflows->where('payment_method', 'cash'), 'amount_minor')->plus($this->sum($operations->where('actor_id', $user->id)->where('payment_method', 'cash'), 'cash_amount_minor'));
 
                 return ['id' => $user->id, 'name' => $user->name, 'active' => $user->is_active, 'sale_count' => $ownSales->count(), 'net_sales' => $this->money($this->sum($ownSales, 'total_minor')),
                     'cash_confirmed' => $this->money($cash), 'mpesa_verified' => $this->money($this->sum($ownPayments->where('status', 'verified')->where('method', 'manual_mpesa'), 'amount_minor')),

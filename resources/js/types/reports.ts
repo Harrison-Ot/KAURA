@@ -4,6 +4,9 @@ export type FinancialReport = {
     generated_at: string;
     opening_ready: boolean;
     summary: {
+        returns: string;
+        debt_write_offs: string;
+        credit_offsets: string;
         refunds: string;
         net_collections_after_refunds: string;
         sale_count: number;

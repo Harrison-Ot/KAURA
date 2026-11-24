@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\CashOutflow;
-use App\Models\Payment;
 use App\Models\ShopSettings;
 use App\Models\User;
+use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -38,7 +38,7 @@ class OwnerOutflowService
                 throw ValidationException::withMessages(['amount' => 'Record a positive amount that has actually left the shop.']);
             }
             StockArithmetic::total((int) CashOutflow::query()->sum('amount_minor'), $amount, 'amount');
-            if ($data['payment_method'] === 'mpesa' && (CashOutflow::query()->where('payment_reference', $data['payment_reference'])->exists() || Payment::query()->where('mpesa_code', $data['payment_reference'])->exists())) {
+            if ($data['payment_method'] === 'mpesa' && MpesaCodes::exists($data['payment_reference'])) {
                 throw ValidationException::withMessages(['payment_reference' => 'This M-Pesa code was already recorded. Check the existing entry.']);
             }
             $outflow = CashOutflow::create(['submission_key' => $data['submission_key'], 'payload_hash' => $hash, 'kind' => $data['kind'], 'category' => $data['kind'] === 'expense' ? $data['category'] : null,

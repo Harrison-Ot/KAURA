@@ -35,6 +35,9 @@ class SaleVoidService
             if ($sale->getAttribute('status') !== 'posted') {
                 throw ValidationException::withMessages(['void' => 'This sale is not available for voiding. Ask the owner to reconcile its history.']);
             }
+            if (DB::table('shop_operations')->where('sale_id', $sale->id)->where('kind', 'return')->exists() || DB::table('shop_operations')->whereIn('receivable_id', DB::table('receivables')->where('sale_id', $sale->id)->select('id'))->exists()) {
+                throw ValidationException::withMessages(['void' => 'This sale has linked returns or debt adjustments. Return the remaining items through owner review instead of voiding the original sale.']);
+            }
             $debt = Receivable::query()->where('sale_id', $sale->id)->lockForUpdate()->first();
             $confirmed = (int) Payment::query()->where('sale_id', $sale->id)->where('status', 'verified')->sum('amount_minor');
             if ($debt !== null) {

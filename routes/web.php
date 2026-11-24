@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CashReconciliationController;
+use App\Http\Controllers\CatalogueImportController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerCreditPayoutController;
 use App\Http\Controllers\EmployeeController;
@@ -10,9 +12,11 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\OutflowController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportExportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleRequestController;
 use App\Http\Controllers\SaleVoidController;
+use App\Http\Controllers\ShopOperationController;
 use App\Http\Controllers\ShopSettingsController;
 use App\Http\Controllers\StockCountController;
 use App\Models\Payment;
@@ -21,8 +25,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
+Route::inertia('/signup', 'auth/signup')->middleware('guest')->name('signup');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('my-day', [CashReconciliationController::class, 'index'])->name('my-day');
+    Route::post('my-day', [CashReconciliationController::class, 'store'])->name('my-day.store');
     Route::get('dashboard', function (Request $request) {
         $payments = Payment::query()->where('method', 'manual_mpesa');
         if ($request->user()->role !== 'owner') {
@@ -74,6 +81,15 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('catalogue-import', [CatalogueImportController::class, 'index'])->name('catalogue-import.index');
+    Route::post('catalogue-import', [CatalogueImportController::class, 'preview'])->name('catalogue-import.preview');
+    Route::post('catalogue-import/{import}/post', [CatalogueImportController::class, 'post'])->whereNumber('import')->name('catalogue-import.post');
+    Route::get('operations', [ShopOperationController::class, 'index'])->name('operations.index');
+    Route::get('operations/quote', [ShopOperationController::class, 'quote'])->name('operations.quote');
+    Route::get('operations/create', [ShopOperationController::class, 'context'])->name('operations.create');
+    Route::post('operations', [ShopOperationController::class, 'store'])->name('operations.store');
+    Route::post('cash-handovers/{handover}/review', [CashReconciliationController::class, 'review'])->whereNumber('handover')->name('cash-handovers.review');
+    Route::get('reports/export', [ReportExportController::class, 'export'])->name('reports.export');
     Route::post('customer-credits/{credit}/payout', [CustomerCreditPayoutController::class, 'store'])->whereNumber('credit')->name('customer-credits.payout');
     Route::get('sale-voids', [SaleVoidController::class, 'index'])->name('voids.index');
     Route::post('sale-voids/{void}/resolve', [SaleVoidController::class, 'resolve'])->name('voids.resolve');

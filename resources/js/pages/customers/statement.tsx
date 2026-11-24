@@ -1,3 +1,4 @@
+import { minorMoney } from '@/lib/money';
 import { Head, Link } from '@inertiajs/react';
 import { kes } from '@/lib/catalogue';
 import CustomerCreditPayout from '@/components/customer-credit-payout';
@@ -22,7 +23,17 @@ export default function Statement({
     allocations,
     unconfirmedInstalments,
     credits,
+    adjustments,
 }: {
+    adjustments: {
+        id: number;
+        kind: string;
+        amount_minor: string;
+        debt_amount_minor: string;
+        cash_amount_minor: string;
+        reason: string;
+        business_date: string;
+    }[];
     customer: { id: number; name: string; contact: string };
     receivables: Receivable[];
     credits: {
@@ -69,13 +80,45 @@ export default function Statement({
                     settlements.
                 </p>
             </div>
+            <Link
+                href={`/owner/operations/create?customer_id=${customer.id}`}
+                className="inline-flex rounded-lg border px-4 py-2 text-sm font-semibold text-primary"
+            >
+                Apply retained credit / write off debt
+            </Link>
+            {adjustments.length > 0 && (
+                <section className="space-y-3 rounded-xl border p-5">
+                    <h2 className="font-semibold">
+                        Returns & balance adjustments
+                    </h2>
+                    {adjustments.map((adjustment) => (
+                        <div key={adjustment.id} className="text-sm">
+                            <p className="font-medium">
+                                {adjustment.business_date} ?{' '}
+                                {adjustment.kind.replaceAll('_', ' ')} ?{' '}
+                                {minorMoney(adjustment.amount_minor)}
+                            </p>
+                            <p>
+                                Debt reduction:{' '}
+                                {minorMoney(adjustment.debt_amount_minor)} ?
+                                Cash refunded:{' '}
+                                {minorMoney(adjustment.cash_amount_minor)}
+                            </p>
+                            <p className="text-muted-foreground">
+                                {adjustment.reason}
+                            </p>
+                        </div>
+                    ))}
+                </section>
+            )}
             {credits.length > 0 && (
                 <section className="space-y-3 rounded-xl border bg-secondary p-5 text-secondary-foreground">
                     <h2 className="font-semibold">Retained customer credit</h2>
                     <p className="text-sm">
                         These amounts are owed to the customer and are separate
-                        from their debts. Record a completed payout below.
-                        Checkout redemption and debt offsets remain unavailable.
+                        from their debts. Record a completed payout below. The
+                        owner can apply retained credit to the oldest debt
+                        through the linked review action.
                     </p>
                     {credits.map((credit) => (
                         <div key={credit.id} className="space-y-3">

@@ -136,6 +136,8 @@ class InventoryController extends Controller
             ->leftJoin('stock_counts', 'stock_counts.id', '=', 'stock_count_items.stock_count_id')
             ->leftJoin('sale_void_items', 'sale_void_items.id', '=', 'stock_movements.sale_void_item_id')
             ->leftJoin('sale_voids', 'sale_voids.id', '=', 'sale_void_items.sale_void_id')
+            ->leftJoin('shop_operation_items', 'shop_operation_items.id', '=', 'stock_movements.shop_operation_item_id')
+            ->leftJoin('products as operation_products', 'operation_products.id', '=', 'shop_operation_items.product_id')
             ->leftJoin('sale_items as voided_items', 'voided_items.id', '=', 'sale_void_items.sale_item_id')
             ->leftJoin('sales as voided_sales', 'voided_sales.id', '=', 'sale_voids.sale_id')
             ->join('users', 'users.id', '=', 'stock_movements.actor_id');
@@ -144,7 +146,7 @@ class InventoryController extends Controller
         }
 
         return Inertia::render('inventory/ledger', [
-            'movements' => $query->orderByDesc('stock_movements.id')->paginate(30, ['stock_movements.id', 'stock_movements.kind', 'stock_movements.quantity_delta', 'stock_movements.balance_after', 'stock_movements.effective_on', DB::raw('COALESCE(inventory_batch_items.label, sale_items.name, stock_count_items.name, voided_items.name) as label'), DB::raw('COALESCE(inventory_batch_items.sku, sale_items.sku, stock_count_items.sku, voided_items.sku) as sku'), DB::raw('COALESCE(inventory_batch_items.unit_label, sale_items.unit_label, stock_count_items.unit_label, voided_items.unit_label) as unit_label'), 'inventory_batches.id as batch_id', DB::raw('COALESCE(sales.id, voided_sales.id) as sale_id'), 'stock_counts.id as count_id', DB::raw('COALESCE(inventory_batches.reference, sales.reference, stock_counts.reference, voided_sales.reference) as reference'), 'users.name as actor_name'])->withQueryString(),
+            'movements' => $query->orderByDesc('stock_movements.id')->paginate(30, ['stock_movements.id', 'stock_movements.kind', 'stock_movements.quantity_delta', 'stock_movements.balance_after', 'stock_movements.effective_on', DB::raw('COALESCE(inventory_batch_items.label, sale_items.name, stock_count_items.name, voided_items.name, operation_products.name) as label'), DB::raw('COALESCE(inventory_batch_items.sku, sale_items.sku, stock_count_items.sku, voided_items.sku, operation_products.sku) as sku'), DB::raw('COALESCE(inventory_batch_items.unit_label, sale_items.unit_label, stock_count_items.unit_label, voided_items.unit_label, operation_products.unit_label) as unit_label'), 'inventory_batches.id as batch_id', DB::raw('COALESCE(sales.id, voided_sales.id) as sale_id'), 'stock_counts.id as count_id', DB::raw('COALESCE(inventory_batches.reference, sales.reference, stock_counts.reference, voided_sales.reference) as reference'), 'users.name as actor_name'])->withQueryString(),
             'products' => Product::query()->orderBy('name')->get(['id', 'sku', 'name']), 'product_id' => $data['product_id'] ?? '',
         ]);
     }
@@ -154,6 +156,7 @@ class InventoryController extends Controller
         $receivables = DB::table('receivables')->where('customer_id', $customer->id)->orderBy('originated_on')->orderBy('id')->get();
 
         return Inertia::render('customers/statement', [
+            'adjustments' => DB::table('shop_operations')->where('customer_id', $customer->id)->orderBy('id')->get(['id', 'kind', 'amount_minor', 'debt_amount_minor', 'cash_amount_minor', 'reason', 'business_date']),
             'credits' => DB::table('customer_credits')->join('void_resolutions', 'void_resolutions.id', '=', 'customer_credits.void_resolution_id')->join('sale_voids', 'sale_voids.id', '=', 'void_resolutions.sale_void_id')->where('customer_credits.customer_id', $customer->id)->orderBy('customer_credits.id')->get(['customer_credits.id', 'customer_credits.original_amount_minor', 'customer_credits.remaining_amount_minor', 'void_resolutions.business_date', 'sale_voids.sale_id'])->map(fn (object $credit): array => ['id' => $credit->id, 'sale_id' => $credit->sale_id, 'business_date' => $credit->business_date, 'original' => CatalogueValues::money((int) $credit->original_amount_minor), 'remaining' => CatalogueValues::money((int) $credit->remaining_amount_minor), 'submission_key' => (string) Str::uuid(), 'payout_outflow_id' => DB::table('customer_credit_payouts')->where('customer_credit_id', $credit->id)->value('cash_outflow_id')]),
             'customer' => $customer->only(['id', 'name', 'contact']),
             'unconfirmedInstalments' => Payment::query()->where('customer_id', $customer->id)->where('purpose', 'instalment')->whereIn('status', ['pending', 'disputed'])->orderBy('id')->get()->map(fn (Payment $payment): array => [...$payment->only(['id', 'reference', 'status', 'business_date', 'mpesa_code']), 'amount' => CatalogueValues::money($payment->amount_minor)]),

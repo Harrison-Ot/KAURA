@@ -5,11 +5,11 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\InventoryBatch;
 use App\Models\InventoryBatchItem;
-use App\Models\Payment;
 use App\Models\Product;
 use App\Models\ShopSettings;
 use App\Models\User;
 use App\Support\CatalogueValues;
+use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
@@ -127,7 +127,7 @@ class InventoryService
                     }
                 }
                 if ($batch->kind === 'stock_receipt') {
-                    if ($batch->payment_method === 'mpesa' && Payment::query()->where('mpesa_code', $batch->payment_reference)->exists()) {
+                    if ($batch->payment_method === 'mpesa' && MpesaCodes::exists($batch->payment_reference)) {
                         throw ValidationException::withMessages(['batch' => 'This M-Pesa code was already recorded as an incoming payment. Nothing was posted.']);
                     }
                     DB::table('cash_outflows')->insert([

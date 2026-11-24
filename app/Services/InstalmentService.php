@@ -6,9 +6,9 @@ use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\ShopSettings;
 use App\Models\User;
+use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -45,7 +45,7 @@ class InstalmentService
             if ($manual && (! $settings->mpesa_number || $settings->mpesa_number !== $data['expected_receiving_number'])) {
                 throw ValidationException::withMessages(['expected_receiving_number' => 'Receiving number changed. Refresh and check the payment destination.']);
             }
-            if ($manual && (Payment::query()->where('mpesa_code', $data['mpesa_code'])->exists() || DB::table('cash_outflows')->where('payment_reference', $data['mpesa_code'])->exists())) {
+            if ($manual && MpesaCodes::exists($data['mpesa_code'])) {
                 throw ValidationException::withMessages(['mpesa_code' => 'This M-Pesa code was already recorded.']);
             }
             $payment = Payment::create([

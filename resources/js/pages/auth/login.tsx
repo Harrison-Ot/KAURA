@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -96,7 +96,13 @@ export default function Login({ status, canResetPassword }: Props) {
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Ask the owner to create your employee account.
+                            New to the team?{' '}
+                            <Link
+                                href="/signup"
+                                className="font-semibold text-primary underline underline-offset-4"
+                            >
+                                Get account access
+                            </Link>
                         </div>
                     </>
                 )}
@@ -112,6 +118,7 @@ export default function Login({ status, canResetPassword }: Props) {
 }
 
 Login.layout = {
-    title: 'Log in to your account',
-    description: 'Enter your email and password below to log in',
+    title: 'Welcome back.',
+    description:
+        'Sign in to your Kaura Hardware workspace and get your day moving.',
 };

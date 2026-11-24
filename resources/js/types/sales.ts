@@ -21,6 +21,15 @@ export type SaleSummary = {
     };
 };
 export type SaleDetails = SaleSummary & {
+    operations: {
+        id: number;
+        kind: string;
+        amount_minor: string;
+        cash_amount_minor: string;
+        debt_amount_minor: string;
+        reason: string;
+        business_date: string;
+    }[];
     void: {
         resolution: {
             credit_payout_amount: string | null;

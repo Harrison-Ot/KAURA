@@ -1,3 +1,4 @@
+import { minorMoney } from '@/lib/money';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,39 @@ export default function SaleView({ sale }: { sale: SaleDetails }) {
                     </a>
                 </Button>
             </div>
+            {owner && sale.status === 'posted' && (
+                <Link
+                    href={`/owner/operations/create?sale_id=${sale.id}`}
+                    className="inline-flex rounded-lg border px-4 py-2 text-sm font-semibold text-primary"
+                >
+                    Return items / review refund
+                </Link>
+            )}
+            {sale.operations.length > 0 && (
+                <section className="space-y-3 rounded-xl border bg-secondary p-5">
+                    <h2 className="font-semibold">
+                        Linked returns & balance adjustments
+                    </h2>
+                    {sale.operations.map((operation) => (
+                        <div key={operation.id} className="text-sm">
+                            <p className="font-medium">
+                                {operation.business_date} ?{' '}
+                                {operation.kind.replaceAll('_', ' ')} ?{' '}
+                                {minorMoney(operation.amount_minor)}
+                            </p>
+                            <p>
+                                Cash refund:{' '}
+                                {minorMoney(operation.cash_amount_minor)} ? Debt
+                                reduction:{' '}
+                                {minorMoney(operation.debt_amount_minor)}
+                            </p>
+                            <p className="text-muted-foreground">
+                                {operation.reason}
+                            </p>
+                        </div>
+                    ))}
+                </section>
+            )}
             {sale.void && (
                 <section className="space-y-3 rounded-xl border bg-secondary p-5 text-secondary-foreground">
                     <h2 className="font-semibold">

@@ -30,12 +30,18 @@ export default function CashCheckout({
     submission_key,
     openingReady,
     mpesaNumber,
+    retainedCredits,
 }: {
     products: Product[];
     customers: { id: number; name: string; contact: string }[];
     submission_key: string;
     openingReady: boolean;
     mpesaNumber: string | null;
+    retainedCredits: {
+        id: number;
+        customer_id: number;
+        remaining_amount_minor: string;
+    }[];
 }) {
     const [search, setSearch] = useState('');
     const [proposal, setProposal] = useState({
@@ -53,6 +59,8 @@ export default function CashCheckout({
         payer_reference: '',
         expected_receiving_number: mpesaNumber ?? '',
         customer_id: '',
+        customer_credit_id: '',
+        retained_credit_amount: '',
         items: [] as CartItem[],
     });
     const errors = form.errors as Record<string, string | undefined>;
@@ -73,7 +81,18 @@ export default function CashCheckout({
         ? amounts.reduce<bigint>((sum, amount) => sum + (amount ?? 0n), 0n)
         : null;
     const tendered = minorAmount(form.data.cash_tendered);
-    const enough = total !== null && tendered !== null && tendered >= total;
+    const retainedAmount = form.data.customer_credit_id
+        ? minorAmount(form.data.retained_credit_amount)
+        : 0n;
+    const cashDue =
+        total !== null && retainedAmount !== null
+            ? total - retainedAmount
+            : total;
+    const enough =
+        cashDue !== null &&
+        cashDue >= 0n &&
+        tendered !== null &&
+        tendered >= cashDue;
     const manual = form.data.payment_method === 'manual_mpesa';
     const manualAmount = minorAmount(form.data.mpesa_amount);
     const paymentReady = manual
@@ -227,6 +246,15 @@ export default function CashCheckout({
                             payment_method: data.payment_method,
                             customer_id: data.customer_id,
                             items: data.items,
+                            ...(data.payment_method === 'cash' &&
+                            data.customer_credit_id
+                                ? {
+                                      customer_credit_id:
+                                          data.customer_credit_id,
+                                      retained_credit_amount:
+                                          data.retained_credit_amount,
+                                  }
+                                : {}),
                             ...(data.payment_method === 'cash'
                                 ? { cash_tendered: data.cash_tendered }
                                 : {
@@ -433,6 +461,77 @@ export default function CashCheckout({
                         </select>
                         <InputError message={errors.payment_method} />
                     </div>
+                    {!manual && retainedCredits.length > 0 && (
+                        <section className="space-y-3 rounded-xl border bg-secondary p-4">
+                            <Label htmlFor="retained-credit">
+                                Apply retained customer credit (owner)
+                            </Label>
+                            <select
+                                id="retained-credit"
+                                className="w-full rounded-lg border bg-background p-2 text-sm"
+                                value={form.data.customer_credit_id}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'customer_credit_id',
+                                        e.target.value,
+                                    )
+                                }
+                            >
+                                <option value="">No retained credit</option>
+                                {retainedCredits
+                                    .filter(
+                                        (credit) =>
+                                            String(credit.customer_id) ===
+                                            String(form.data.customer_id),
+                                    )
+                                    .map((credit) => (
+                                        <option
+                                            key={credit.id}
+                                            value={credit.id}
+                                        >
+                                            Credit #{credit.id} ? KES{' '}
+                                            {decimalAmount(
+                                                BigInt(
+                                                    credit.remaining_amount_minor,
+                                                ),
+                                            )}
+                                        </option>
+                                    ))}
+                            </select>
+                            {form.data.customer_credit_id && (
+                                <>
+                                    <Label htmlFor="retained-amount">
+                                        Credit to apply (KES)
+                                    </Label>
+                                    <Input
+                                        id="retained-amount"
+                                        inputMode="decimal"
+                                        value={form.data.retained_credit_amount}
+                                        onChange={(e) =>
+                                            form.setData(
+                                                'retained_credit_amount',
+                                                e.target.value,
+                                            )
+                                        }
+                                    />
+                                    <p className="text-xs">
+                                        Cash due:{' '}
+                                        {cashDue === null
+                                            ? 'Check amount'
+                                            : kes(decimalAmount(cashDue))}
+                                        . Enter zero cash tendered when credit
+                                        covers the whole sale.
+                                    </p>
+                                </>
+                            )}
+                            <InputError
+                                message={
+                                    errors.customer_credit_id ??
+                                    errors.retained_credit_amount
+                                }
+                            />
+                        </section>
+                    )}
                     {manual ? (
                         <section className="space-y-4 rounded-lg border p-4">
                             <div>

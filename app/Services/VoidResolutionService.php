@@ -10,6 +10,7 @@ use App\Models\SaleVoid;
 use App\Models\ShopSettings;
 use App\Models\User;
 use App\Models\VoidResolution;
+use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -43,7 +44,7 @@ class VoidResolutionService
             if ($customer !== null && $sale->getAttribute('customer_id') !== null && (int) $sale->getAttribute('customer_id') !== $customer->id) {
                 throw ValidationException::withMessages(['customer_id' => 'Retained credit must belong to this sale\'s named customer.']);
             }
-            if (! $credit && $data['payment_method'] === 'mpesa' && (CashOutflow::query()->where('payment_reference', $data['payment_reference'])->exists() || Payment::query()->where('mpesa_code', $data['payment_reference'])->exists())) {
+            if (! $credit && $data['payment_method'] === 'mpesa' && MpesaCodes::exists($data['payment_reference'])) {
                 throw ValidationException::withMessages(['payment_reference' => 'This outgoing or incoming M-Pesa code was already recorded.']);
             }
             if (! $credit) {

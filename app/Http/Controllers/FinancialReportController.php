@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AccessAudit;
 use App\Services\FinancialReportService;
+use App\Services\ReportDetailService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -17,7 +18,7 @@ class FinancialReportController extends Controller
     {
         [$from, $to] = $this->dates($request);
 
-        return Inertia::render('reports/financial', ['report' => $service->build($request->user(), $from, $to)]);
+        return Inertia::render('reports/financial', ['report' => $service->build($request->user(), $from, $to), 'detail' => app(ReportDetailService::class)->build($from, $to)]);
     }
 
     public function export(Request $request, FinancialReportService $service): StreamedResponse

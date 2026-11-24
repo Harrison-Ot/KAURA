@@ -6,6 +6,7 @@ use App\Models\Receivable;
 use App\Models\Sale;
 use App\Models\SaleVoid;
 use App\Support\CatalogueValues;
+use Illuminate\Support\Facades\DB;
 
 class SaleSettlement
 {
@@ -23,7 +24,9 @@ class SaleSettlement
         }
         $receivable = Receivable::query()->where('sale_id', $sale->id)->first();
         $balance = $receivable === null ? max(0, $sale->total_minor - $confirmed) : $receivable->remaining_amount_minor;
-        $confirmed = $sale->total_minor - $balance;
+        if ($receivable !== null) {
+            $confirmed += (int) DB::table('payment_allocations')->join('payments', 'payments.id', '=', 'payment_allocations.payment_id')->where('receivable_id', $receivable->id)->where('payments.purpose', 'instalment')->where('payments.status', 'verified')->sum('payment_allocations.amount_minor');
+        }
 
         return [
             'confirmed' => CatalogueValues::money($confirmed), 'pending' => CatalogueValues::money($pending), 'disputed' => CatalogueValues::money($disputed),

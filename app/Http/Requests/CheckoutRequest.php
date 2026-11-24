@@ -35,6 +35,8 @@ class CheckoutRequest extends FormRequest
             'expected_receiving_number' => [$manual ? 'required' : 'prohibited', 'string', 'max:20'],
             'payer_reference' => [$manual ? 'nullable' : 'prohibited', 'string', 'max:255'],
             'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+            'customer_credit_id' => [$this->user()?->role === 'owner' ? 'nullable' : 'prohibited', 'integer', 'exists:customer_credits,id'],
+            'retained_credit_amount' => [$this->filled('customer_credit_id') ? 'required' : 'prohibited', 'regex:'.StockArithmetic::TOTAL_RULE],
             'approval_id' => ['nullable', 'integer', 'exists:sale_requests,id'],
             'items' => ['required', 'array', 'list', 'min:1', 'max:100'],
             'items.*' => ['required', 'array:product_id,quantity,quoted_price'],

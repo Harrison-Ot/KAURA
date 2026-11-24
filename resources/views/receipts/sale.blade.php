@@ -47,6 +47,10 @@
         @if($payment['mpesa_code'])<p>Code: {{ $payment['mpesa_code'] }} · Receiving number: {{ $payment['receiving_number'] }}</p>@endif
     @endforeach
     <p class="row"><span>Confirmed collections</span><span>{{ $sale['settlement']['confirmed'] }}</span></p>
+    @foreach($sale['operations'] as $operation)
+        <p>{{ str_replace('_', ' ', $operation->kind) }} ? {{ $operation->business_date }}: KES {{ \App\Support\CatalogueValues::money((int) $operation->amount_minor) }}</p>
+        @if($operation->cash_amount_minor > 0)<p>Refund recorded: KES {{ \App\Support\CatalogueValues::money((int) $operation->cash_amount_minor) }}</p>@endif
+    @endforeach
     <p class="row"><span>Balance due</span><span>{{ $sale['settlement']['balance_due'] }}</span></p>
     @if($sale['settlement']['state'] === 'voided')<p>VOIDED — original sale retained for history.</p><p>Reason: {{ $sale['void']['reason'] ?? '' }}</p><p>Stock review: {{ $sale['void']['stock_status'] ?? 'pending' }}</p>
         @if($sale['void']['resolution'] ?? null)<p>{{ $sale['void']['resolution']['kind'] === 'refund' ? 'Owner refund recorded' : 'Retained customer credit recorded' }}: KES {{ $sale['void']['resolution']['amount'] }} · {{ $sale['void']['resolution']['business_date'] }}</p>

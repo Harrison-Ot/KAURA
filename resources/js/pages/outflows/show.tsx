@@ -18,6 +18,14 @@ export default function OutflowDetails({ outflow }: { outflow: Outflow }) {
                     {outflow.reference} · Posted
                 </p>
             </div>
+            {outflow.kind !== 'refund' && (
+                <Link
+                    href={`/owner/operations/create?outflow_id=${outflow.id}`}
+                    className="inline-flex rounded-lg border px-4 py-2 text-sm font-semibold text-primary"
+                >
+                    Record returned funds / linked reversal
+                </Link>
+            )}
             <section className="space-y-3 rounded-xl border bg-card p-5">
                 <p className="text-2xl font-semibold">{kes(outflow.amount)}</p>
                 <p>Business date: {outflow.effective_on} · Nairobi</p>

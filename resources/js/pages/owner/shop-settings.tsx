@@ -10,6 +10,9 @@ type Settings = {
     contact: string | null;
     mpesa_number: string | null;
     version: number;
+    tax_registration: string | null;
+    tax_label: string | null;
+    future_tax_rate: string | null;
 };
 
 export default function ShopSettings({
@@ -64,6 +67,18 @@ export default function ShopSettings({
                                 ['address', 'Address (optional)'],
                                 ['contact', 'Shop contact (optional)'],
                                 [
+                                    'tax_registration',
+                                    'Tax registration reference (future use)',
+                                ],
+                                [
+                                    'tax_label',
+                                    'Tax label (future use, max 50 characters)',
+                                ],
+                                [
+                                    'future_tax_rate',
+                                    'Future tax rate % (0?100, up to 2 decimals)',
+                                ],
+                                [
                                     'mpesa_number',
                                     'Manual M-Pesa receiving number (optional)',
                                 ],
@@ -114,8 +129,10 @@ export default function ShopSettings({
                             <InputError message={errors.reason} />
                         </div>
                         <p className="text-sm">
-                            Currency: KES · Shop timezone: Africa/Nairobi ·
-                            Inventory costing: weighted average
+                            Tax settings are saved for future review only and do
+                            not apply tax or claim compliance. Currency: KES ·
+                            Shop timezone: Africa/Nairobi · Inventory costing:
+                            weighted average
                         </p>
                         <Button disabled={processing}>
                             Save shop settings

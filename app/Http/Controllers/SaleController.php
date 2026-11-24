@@ -61,6 +61,7 @@ class SaleController extends Controller
         return Inertia::render('sales/create', [
             'submission_key' => (string) Str::uuid(), 'openingReady' => $settings->opening_completed_at !== null && $settings->shop_name !== null,
             'mpesaNumber' => $settings->mpesa_number,
+            'retainedCredits' => auth()->user()->role === 'owner' ? DB::table('customer_credits')->where('remaining_amount_minor', '>', 0)->get(['id', 'customer_id', 'remaining_amount_minor']) : [],
             'products' => Product::query()->where('is_active', true)->orderBy('name')->get()->map(fn (Product $product): array => [
                 ...$product->only(['id', 'sku', 'name', 'barcode', 'unit_label', 'quantity_precision', 'quantity_on_hand']),
                 'selling_price' => CatalogueValues::money($product->selling_price_minor),
@@ -103,6 +104,7 @@ class SaleController extends Controller
         $resolution = $void === null ? null : VoidResolution::query()->where('sale_void_id', $void->id)->first();
         $creditPayout = $resolution === null ? null : DB::table('customer_credit_payouts')->join('customer_credits', 'customer_credits.id', '=', 'customer_credit_payouts.customer_credit_id')->where('customer_credits.void_resolution_id', $resolution->id)->value('customer_credit_payouts.amount_minor');
         $result = [
+            'operations' => DB::table('shop_operations')->where('sale_id', $sale->id)->orderBy('id')->get(['id', 'kind', 'amount_minor', 'cash_amount_minor', 'debt_amount_minor', 'reason', 'business_date']),
             'void' => $void === null ? null : [...$void->only(['id', 'reason', 'created_at', 'stock_status', 'stock_reason', 'funds_status']), 'resolution' => $resolution === null ? null : [...$resolution->only(['kind', 'business_date']), 'amount' => CatalogueValues::money($resolution->amount_minor), 'credit_payout_amount' => $creditPayout === null ? null : CatalogueValues::money((int) $creditPayout)], 'actor_name' => User::query()->where('id', $void->getAttribute('actor_id'))->value('name'), 'confirmed_funds' => CatalogueValues::money($void->confirmed_minor), 'canceled_debt' => CatalogueValues::money((int) $void->getAttribute('canceled_debt_minor'))],
             ...$this->summary($sale), ...$sale->only(['shop_snapshot', 'customer_snapshot', 'approval_id', 'promised_due_on']),
             'approved_credit' => CatalogueValues::money((int) $sale->getAttribute('credit_minor')),

@@ -10,19 +10,19 @@ Build a Laravel + Inertia.js + React + TypeScript system for one Kenyan hardware
 
 ## 2. Users and permissions
 
-| Action | Owner | Employee |
-| --- | --- | --- |
-| View all sales, payments, customer debts, financial reports and audit history | Yes | No; own sales and payment records only |
-| View products and stock quantities | Yes | Yes |
-| Add customers; create sales; record cash or pending M-Pesa payments | Yes | Yes, attributed to their own account |
-| Enter stock receipts or opening stock; change selling prices | Yes | No |
-| Approve discounts and credit; set each customer's credit limit | Yes, through own signed-in account | Request only |
-| Create physical stock counts and report discrepancies | Yes | Yes |
-| Approve stock adjustments or refunds | Yes | No |
-| Void a completed sale with a mandatory reason | Yes | Yes, subject to rules in §5 |
-| Change manual M-Pesa receiving number; verify incoming M-Pesa payments | Yes | No |
-| Create expenses and owner withdrawals | Yes | No by default |
-| Manage accounts and permissions | Yes | No |
+| Action                                                                        | Owner                              | Employee                               |
+| ----------------------------------------------------------------------------- | ---------------------------------- | -------------------------------------- |
+| View all sales, payments, customer debts, financial reports and audit history | Yes                                | No; own sales and payment records only |
+| View products and stock quantities                                            | Yes                                | Yes                                    |
+| Add customers; create sales; record cash or pending M-Pesa payments           | Yes                                | Yes, attributed to their own account   |
+| Enter stock receipts or opening stock; change selling prices                  | Yes                                | No                                     |
+| Approve discounts and credit; set each customer's credit limit                | Yes, through own signed-in account | Request only                           |
+| Create physical stock counts and report discrepancies                         | Yes                                | Yes                                    |
+| Approve stock adjustments or refunds                                          | Yes                                | No                                     |
+| Void a completed sale with a mandatory reason                                 | Yes                                | Yes, subject to rules in §5            |
+| Change manual M-Pesa receiving number; verify incoming M-Pesa payments        | Yes                                | No                                     |
+| Create expenses and owner withdrawals                                         | Yes                                | No by default                          |
+| Manage accounts and permissions                                               | Yes                                | No                                     |
 
 Use server-side authorization for all actions and record ownership. Deactivating an employee must preserve their historical attribution. Every sensitive event records actor, time, reason, and before/after state. Owner approval uses the owner's own authenticated session; never allow an employee to approve on the owner's behalf by entering a shared PIN.
 
@@ -54,15 +54,15 @@ Owner must approve each credit sale from their account. Each customer has an own
 
 Record all money leaving the shop, with a separate type for stock purchases, operating expenses (rent, transport, electricity, wages and other categories), and **owner withdrawals**. Supplier purchases are paid when goods are delivered; record both stock receipt and cash outflow, once each. Owner withdrawals reduce available cash but are never operating expenses or profit deductions. Provide day and date-range views and owner-only CSV exports.
 
-| Metric | Rule |
-| --- | --- |
-| Gross sales | Total posted sales before discounts and returns, excluding voided sales |
-| Net sales | Gross sales less approved discounts and returns |
-| Confirmed collections | Cash collected plus owner-verified M-Pesa, including repayments of old debt; show unverified M-Pesa separately |
-| Customer debt | Opening unpaid debts plus posted credit sales less verified instalments, eligible returns and explicit write-offs; show pending payments separately |
-| Gross margin estimate | Net sales less cost of goods sold, using a declared costing method and recorded product cost snapshots |
-| Estimated operating profit | Gross margin less recorded operating expenses; stock purchases are inventory cost, not an immediate second expense; owner withdrawals are excluded |
-| Cash reconciliation | Cash received less cash expenses, cash stock purchases and owner withdrawals, compared with actual cash handed over; show discrepancies per employee |
+| Metric                     | Rule                                                                                                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gross sales                | Total posted sales before discounts and returns, excluding voided sales                                                                              |
+| Net sales                  | Gross sales less approved discounts and returns                                                                                                      |
+| Confirmed collections      | Cash collected plus owner-verified M-Pesa, including repayments of old debt; show unverified M-Pesa separately                                       |
+| Customer debt              | Opening unpaid debts plus posted credit sales less verified instalments, eligible returns and explicit write-offs; show pending payments separately  |
+| Gross margin estimate      | Net sales less cost of goods sold, using a declared costing method and recorded product cost snapshots                                               |
+| Estimated operating profit | Gross margin less recorded operating expenses; stock purchases are inventory cost, not an immediate second expense; owner withdrawals are excluded   |
+| Cash reconciliation        | Cash received less cash expenses, cash stock purchases and owner withdrawals, compared with actual cash handed over; show discrepancies per employee |
 
 For incomplete purchase costs or opening stock values, flag margin/profit as incomplete rather than inventing figures. Show sales and collections by employee, payment verification queues, stock valuation, low stock, overdue debt, expenses, withdrawals, and void/refund audit events. Define the inventory cost method (implementation default: weighted average) consistently before calculating margin.
 
@@ -216,14 +216,14 @@ The workflow owner is the role that may complete the task. A request or draft is
 
 ## 13. Cross-workflow state and integrity rules
 
-| Record | Valid progression | Key guard |
-| --- | --- | --- |
-| Sale | Draft → awaiting owner approval (if needed) → posted → voided or partly returned | No stock or revenue impact in draft; void/return uses linked reversals |
-| Credit request | Draft → pending → approved/rejected/expired → consumed | Exact cart/customer/amount/due date bound to owner approval |
-| Manual M-Pesa | Recorded pending → verified or disputed | Pending never increases confirmed collections or permanently clears debt |
-| Stock count | Draft → submitted → approved/rejected | Only owner approval posts an adjustment |
-| Stock receipt | Draft → posted → reversed if corrected | Owner-only, one stock and one payment posting per receipt |
-| Expense or withdrawal | Draft → posted → reversed if corrected | Classification controls profit calculation |
+| Record                | Valid progression                                                                | Key guard                                                                |
+| --------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Sale                  | Draft → awaiting owner approval (if needed) → posted → voided or partly returned | No stock or revenue impact in draft; void/return uses linked reversals   |
+| Credit request        | Draft → pending → approved/rejected/expired → consumed                           | Exact cart/customer/amount/due date bound to owner approval              |
+| Manual M-Pesa         | Recorded pending → verified or disputed                                          | Pending never increases confirmed collections or permanently clears debt |
+| Stock count           | Draft → submitted → approved/rejected                                            | Only owner approval posts an adjustment                                  |
+| Stock receipt         | Draft → posted → reversed if corrected                                           | Owner-only, one stock and one payment posting per receipt                |
+| Expense or withdrawal | Draft → posted → reversed if corrected                                           | Classification controls profit calculation                               |
 
 **Acceptance scenarios to automate:** two employees attempt to buy the last item; employee requests another employee's sale URL; discount approval is reused after a cart edit; credit request exceeds customer's limit; two instalments race to pay the same debt; M-Pesa transaction code is reused; owner changes receiving number while an old payment awaits verification; pending M-Pesa is disputed after goods leave; staff voids a paid sale; stock changes between a count and its approval; opening debt is paid without creating current sales; supplier stock payment is mistaken for an operating expense. Confirm that each case leaves stock, cash, debt and audit history consistent.
 

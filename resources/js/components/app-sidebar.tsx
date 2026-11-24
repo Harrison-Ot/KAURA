@@ -16,6 +16,7 @@ import { dashboard } from '@/routes';
 import type { Auth, NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
+    { title: 'My day & cash', href: '/my-day', icon: LayoutGrid },
     { title: 'Checkout', href: '/sales/create', icon: LayoutGrid },
     { title: 'Sales', href: '/sales', icon: BookOpen },
     { title: 'Collections', href: '/payments', icon: BookOpen },
@@ -38,12 +39,22 @@ export function AppSidebar() {
             ? [
                   ...mainNavItems,
                   {
+                      title: 'Returns & corrections',
+                      href: '/owner/operations',
+                      icon: BookOpen,
+                  },
+                  {
+                      title: 'Import catalogue',
+                      href: '/owner/catalogue-import',
+                      icon: Package,
+                  },
+                  {
                       title: 'Voided sale review',
                       href: '/owner/sale-voids',
                       icon: BookOpen,
                   },
                   {
-                      title: 'Financial report',
+                      title: 'Reports & insights',
                       href: '/owner/reports/financial',
                       icon: BookOpen,
                   },

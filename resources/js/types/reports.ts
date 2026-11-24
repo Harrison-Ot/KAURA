@@ -1,0 +1,57 @@
+export type FinancialReport = {
+    from: string;
+    to: string;
+    generated_at: string;
+    opening_ready: boolean;
+    summary: {
+        refunds: string;
+        net_collections_after_refunds: string;
+        sale_count: number;
+        gross_sales: string;
+        discounts: string;
+        net_sales: string;
+        known_sale_cost: string;
+        unknown_cost_sales: number;
+        gross_margin_estimate: string | null;
+        operating_profit_estimate: string | null;
+        confirmed_collections: string;
+        cash_confirmed: string;
+        mpesa_recorded: string;
+        mpesa_verified: string;
+        mpesa_pending: string;
+        mpesa_disputed: string;
+        confirmed_instalments: string;
+        operating_expenses: string;
+        stock_purchases: string;
+        owner_withdrawals: string;
+        cash_out: string;
+        mpesa_out: string;
+        net_cash_movement: string;
+    };
+    employees: {
+        id: number;
+        name: string;
+        active: boolean;
+        sale_count: number;
+        net_sales: string;
+        cash_confirmed: string;
+        mpesa_verified: string;
+        mpesa_pending: string;
+        mpesa_disputed: string;
+        cash_out: string;
+        net_cash_movement: string;
+    }[];
+    current: {
+        retained_customer_credit: string;
+        void_confirmed_funds_held: string;
+        void_pending_claims: string;
+        outstanding: string;
+        opening_debt: string;
+        credit_sale_debt: string;
+        verification_exposure: string;
+        unassigned_debt: string;
+        overdue_credit_and_opening: string;
+        known_inventory_value: string;
+        unknown_cost_listings: number;
+    };
+};

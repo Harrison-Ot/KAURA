@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Customer;
 use App\Support\CatalogueValues;
 use App\Support\StockArithmetic;
 use Carbon\CarbonImmutable;
@@ -40,6 +41,10 @@ class InventoryBatchRequest extends FormRequest
                     $headers = array_map(fn (?string $header): string => trim((string) $header), $headers);
                     $headers[0] = ltrim($headers[0], "\xEF\xBB\xBF");
                 }
+                $matchContacts = $kind === 'opening_debt' && $headers === ['customer_name', 'contact', 'amount', 'due_on'];
+                if ($matchContacts) {
+                    $expected = ['customer_name', 'contact', 'amount', 'due_on'];
+                }
                 if ($headers !== $expected) {
                     throw ValidationException::withMessages(['csv' => 'Use these CSV headers in order: '.implode(',', $expected)]);
                 }
@@ -55,7 +60,15 @@ class InventoryBatchRequest extends FormRequest
                         throw ValidationException::withMessages(['csv' => 'Save the CSV with UTF-8 text encoding.']);
                     }
                     $values = array_map(fn (?string $value): ?string => trim((string) $value) === '' ? null : trim((string) $value), $values);
-                    $rows[] = array_combine($expected, $values);
+                    $row = array_combine($expected, $values);
+                    if ($matchContacts) {
+                        $matches = Customer::query()->where('name_key', CatalogueValues::nameKey((string) $row['customer_name']))->where('contact_key', CatalogueValues::contactKey((string) $row['contact']))->get(['id']);
+                        if ($matches->count() !== 1) {
+                            throw ValidationException::withMessages(['csv' => 'Row '.(count($rows) + 2).' must match exactly one reviewed customer by name and contact. Create missing customers or use an explicit customer_id for ambiguous matches.']);
+                        }
+                        $row = ['customer_id' => $matches->sole()->id, 'amount' => $row['amount'], 'due_on' => $row['due_on']];
+                    }
+                    $rows[] = $row;
                 }
                 $this->merge(['rows' => $rows]);
             } finally {
@@ -86,6 +99,7 @@ class InventoryBatchRequest extends FormRequest
         $receipt = $this->input('kind') === 'stock_receipt';
 
         return [
+            'replaces_batch_id' => [$receipt ? 'nullable' : 'prohibited', 'integer', 'exists:inventory_batches,id'],
             'kind' => ['required', Rule::in(['opening_stock', 'opening_debt', 'stock_receipt'])],
             'submission_key' => ['required', 'uuid'],
             'effective_on' => ['required', 'date_format:Y-m-d', 'before_or_equal:'.CarbonImmutable::now('Africa/Nairobi')->toDateString()],

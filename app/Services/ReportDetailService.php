@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ShopSettings;
 use App\Models\User;
 use Brick\Math\BigDecimal;
 use Brick\Math\BigInteger;
@@ -11,7 +12,19 @@ use Illuminate\Support\Facades\DB;
 class ReportDetailService
 {
     /** @return array<string, mixed> */
-    public function build(string $from, string $to): array
+    public function build(User $actor, string $from, string $to): array
+    {
+        abort_unless($actor->is_active && $actor->role === 'owner', 403);
+
+        return PostingTransaction::run(function () use ($from, $to): array {
+            ShopSettings::query()->lockForUpdate()->findOrFail(1);
+
+            return $this->snapshot($from, $to);
+        }, 'report');
+    }
+
+    /** @return array<string, mixed> */
+    private function snapshot(string $from, string $to): array
     {
         $sales = DB::table('sales')->where('status', 'posted')->whereBetween('business_date', [$from, $to])->get();
         $payments = DB::table('payments')->whereBetween('business_date', [$from, $to])->get();

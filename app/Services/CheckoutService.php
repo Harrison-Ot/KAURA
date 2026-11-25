@@ -163,9 +163,9 @@ class CheckoutService
             $remaining = $manual ? $total : $credit;
             StockArithmetic::total((int) DB::table('receivables')->sum('remaining_amount_minor'), $remaining, 'items');
             $receivableId = DB::table('receivables')->insertGetId([
-                'sale_id' => $sale->id, 'customer_id' => $customer?->id, 'origin' => $credit > 0 ? 'credit_sale' : 'payment_verification',
+                'sale_id' => $sale->id, 'customer_id' => $customer?->id, 'origin' => $credit > 0 || $redeemed > 0 ? 'credit_sale' : 'payment_verification',
                 'original_amount_minor' => $total, 'remaining_amount_minor' => $remaining, 'originated_on' => $day, 'due_on' => $approval === null ? $day : ($approval->due_on ?? $day),
-                'source_note' => $credit > 0 ? 'Owner-approved credit sale '.$sale->reference : 'Manual M-Pesa sale '.$sale->reference.' awaiting owner verification.', 'actor_id' => $actor->id, 'created_at' => now(),
+                'source_note' => $redeemed > 0 ? 'Sale '.$sale->reference.' settled using retained customer credit and any cash remainder.' : ($credit > 0 ? 'Owner-approved credit sale '.$sale->reference : 'Manual M-Pesa sale '.$sale->reference.' awaiting owner verification.'), 'actor_id' => $actor->id, 'created_at' => now(),
             ]);
             if ($customer !== null) {
                 $customer->version++;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\ShopOperationService;
 use App\Support\StockArithmetic;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,9 +40,10 @@ class ShopOperationController extends Controller
         ]);
     }
 
-    public function quote(Request $request, ShopOperationService $service): \Illuminate\Http\JsonResponse
+    public function quote(Request $request, ShopOperationService $service): JsonResponse
     {
         $data = $request->validate(['sale_id' => ['required', 'integer', 'exists:sales,id'], 'sale_item_id' => ['required', 'integer', 'exists:sale_items,id'], 'quantity' => ['required', 'regex:/^\d{1,9}(?:\.\d{1,3})?$/'], 'disposition' => ['required', Rule::in(['restock', 'damaged', 'not_received'])]]);
+
         return response()->json($service->quoteReturn($request->user(), ['sale_id' => $data['sale_id'], 'items' => [['sale_item_id' => $data['sale_item_id'], 'quantity' => $data['quantity'], 'disposition' => $data['disposition']]]]));
     }
 

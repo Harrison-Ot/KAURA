@@ -24,7 +24,7 @@ class OwnerOutflowRequest extends FormRequest
     /** @return array<string, mixed> */
     public function rules(): array
     {
-        return ['submission_key' => ['required', 'uuid'], 'kind' => ['required', Rule::in(['expense', 'owner_withdrawal'])],
+        return ['replaces_outflow_id' => ['nullable', 'integer', 'exists:cash_outflows,id'], 'submission_key' => ['required', 'uuid'], 'kind' => ['required', Rule::in(['expense', 'owner_withdrawal'])],
             'category' => [$this->input('kind') === 'expense' ? 'required' : 'prohibited', Rule::in(['rent', 'transport', 'electricity', 'wages', 'other'])],
             'amount' => ['required', 'regex:'.StockArithmetic::TOTAL_RULE], 'payment_method' => ['required', Rule::in(['cash', 'mpesa'])],
             'payment_reference' => [$this->input('payment_method') === 'mpesa' ? 'required' : 'prohibited', 'string', 'regex:/^[A-Z0-9]{6,30}$/'],

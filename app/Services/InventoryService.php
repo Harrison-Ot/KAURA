@@ -36,6 +36,12 @@ class InventoryService
                     return $existing;
                 }
                 $this->checkPhase($settings, $data['kind'], $data['effective_on']);
+                if (! empty($data['replaces_batch_id'])) {
+                    $original = InventoryBatch::query()->where('id', $data['replaces_batch_id'])->firstOrFail();
+                    if ($data['kind'] !== 'stock_receipt' || $original->kind !== 'stock_receipt' || ! DB::table('shop_operations')->where('inventory_batch_id', $original->id)->where('kind', 'receipt_reversal')->exists() || InventoryBatch::query()->where('replaces_batch_id', $original->id)->exists()) {
+                        throw ValidationException::withMessages(['replaces_batch_id' => 'Choose a fully reversed delivery without an existing replacement.']);
+                    }
+                }
                 $items = [];
                 $total = 0;
                 $complete = true;
@@ -85,11 +91,12 @@ class InventoryService
                     }
                 }
                 $batch = InventoryBatch::create([
+                    'replaces_batch_id' => $data['replaces_batch_id'] ?? null,
                     'reference' => strtoupper(str_replace('_', '-', $data['kind'])).'-'.Str::ulid(),
                     'submission_key' => $data['submission_key'], 'payload_hash' => $hash,
                     'kind' => $data['kind'], 'status' => 'draft', 'effective_on' => $data['effective_on'], 'source_note' => $data['source_note'],
                     'supplier_id' => $supplierId, 'supplier_name' => $data['supplier_name'] ?? null, 'delivery_reference' => $data['delivery_reference'] ?? null,
-                    'delivery_key' => $supplierId === null ? null : hash('sha256', $supplierId.'|'.$data['delivery_reference']),
+                    'delivery_key' => $supplierId === null ? null : hash('sha256', $supplierId.'|'.$data['delivery_reference'].(empty($data['replaces_batch_id']) ? '' : '|replacement:'.$data['replaces_batch_id'])),
                     'payment_method' => $data['payment_method'] ?? null, 'payment_reference' => $data['payment_reference'] ?? null,
                     'amount_paid_minor' => $data['kind'] === 'stock_receipt' ? $total : null, 'total_minor' => $complete ? $total : null, 'created_by' => $actor->id,
                 ]);
@@ -134,6 +141,7 @@ class InventoryService
                         'batch_id' => $batch->id, 'kind' => 'stock_purchase', 'payment_method' => $batch->payment_method,
                         'payment_reference' => $batch->payment_reference, 'amount_minor' => $batch->amount_paid_minor,
                         'effective_on' => $batch->effective_on, 'actor_id' => $actor->id, 'created_at' => now(),
+                        'replaces_outflow_id' => empty($batch->getAttribute('replaces_batch_id')) ? null : DB::table('cash_outflows')->where('batch_id', $batch->getAttribute('replaces_batch_id'))->value('id'),
                     ]);
                 } elseif ($settings->opening_as_of === null) {
                     $settings->opening_as_of = $batch->effective_on;

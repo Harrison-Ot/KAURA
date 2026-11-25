@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShopSettings;
 use App\Services\AccessAudit;
 use App\Services\FinancialReportService;
+use App\Services\PostingTransaction;
 use App\Services\ReportDetailService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -18,7 +20,11 @@ class FinancialReportController extends Controller
     {
         [$from, $to] = $this->dates($request);
 
-        return Inertia::render('reports/financial', ['report' => $service->build($request->user(), $from, $to), 'detail' => app(ReportDetailService::class)->build($from, $to)]);
+        return Inertia::render('reports/financial', PostingTransaction::run(function () use ($request, $service, $from, $to): array {
+            ShopSettings::query()->lockForUpdate()->findOrFail(1);
+
+            return ['report' => $service->build($request->user(), $from, $to), 'detail' => app(ReportDetailService::class)->build($request->user(), $from, $to)];
+        }, 'report'));
     }
 
     public function export(Request $request, FinancialReportService $service): StreamedResponse

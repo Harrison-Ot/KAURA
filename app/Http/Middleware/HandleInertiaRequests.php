@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'status' => fn () => $request->session()->get('status'),
             'demoMode' => AuditEvent::query()->where('event', 'development.demo_seeded')->exists(),
             'name' => ShopSettings::query()->where('id', 1)->value('shop_name') ?? 'Kaura Hardware',
             'auth' => [

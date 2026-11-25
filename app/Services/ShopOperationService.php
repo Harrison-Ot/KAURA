@@ -18,15 +18,17 @@ use Illuminate\Validation\ValidationException;
 class ShopOperationService
 {
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, string>
      */
     public function quoteReturn(User $actor, array $data): array
     {
         abort_unless($actor->is_active && $actor->role === 'owner', 403);
+
         return PostingTransaction::run(function () use ($data): array {
             ShopSettings::query()->lockForUpdate()->findOrFail(1);
             [$record] = $this->returnItems($data, []);
+
             return ['amount_minor' => (string) $record['amount_minor'], 'cash_amount_minor' => (string) $record['cash_amount_minor'], 'debt_amount_minor' => (string) $record['debt_amount_minor']];
         }, 'operation');
     }

@@ -32,6 +32,7 @@ class CashReconciliationService
 
     public function submit(User $actor, string $day, string $amount, string $note): void
     {
+        abort_unless($actor->is_active && in_array($actor->role, ['owner', 'employee'], true), 403);
         PostingTransaction::run(function () use ($actor, $day, $amount, $note): void {
             ShopSettings::query()->lockForUpdate()->findOrFail(1);
             $declared = StockArithmetic::totalAmount($amount, 'amount');
@@ -55,13 +56,13 @@ class CashReconciliationService
             $handover = DB::table('cash_handovers')->where('id', $id)->lockForUpdate()->first();
             abort_if($handover === null, 404);
             $received = StockArithmetic::totalAmount($amount, 'received');
-            if ($handover->reviewed_at !== null) {
+            $expected = $this->expected((int) $handover->employee_id, $handover->business_date);
+            if ($handover->reviewed_at !== null && (int) $handover->expected_minor === $expected) {
                 if ((int) $handover->received_minor === $received && $handover->owner_note === $note) {
                     return;
                 }
                 throw ValidationException::withMessages(['handover' => 'This handover already has a final owner review.']);
             }
-            $expected = $this->expected((int) $handover->employee_id, $handover->business_date);
             DB::table('cash_handovers')->where('id', $id)->update(['expected_minor' => $expected, 'received_minor' => $received, 'reviewed_by' => $actor->id, 'owner_note' => $note, 'reviewed_at' => now(), 'updated_at' => now()]);
             AccessAudit::record('cash.handover_reviewed', $actor, null, $note, (array) $handover, ['expected_minor' => $expected, 'received_minor' => $received, 'difference_minor' => $received - $expected], 'cash_handover', $id);
         }, 'handover');

@@ -7,6 +7,7 @@ use App\Models\ShopSettings;
 use App\Models\User;
 use App\Support\MpesaCodes;
 use App\Support\StockArithmetic;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
@@ -33,6 +34,12 @@ class OwnerOutflowService
             if ($settings->opening_completed_at === null) {
                 throw ValidationException::withMessages(['amount' => 'Sign off opening balances before recording new expenses or withdrawals.']);
             }
+            if (! empty($data['replaces_outflow_id'])) {
+                $original = CashOutflow::query()->where('id', $data['replaces_outflow_id'])->firstOrFail();
+                if ($original->kind !== $data['kind'] || ! DB::table('shop_operations')->where('source_key', 'outflow:'.$original->id)->exists() || CashOutflow::query()->where('replaces_outflow_id', $original->id)->exists()) {
+                    throw ValidationException::withMessages(['replaces_outflow_id' => 'Choose an entry of the same type with a completed reversal and no existing replacement.']);
+                }
+            }
             $amount = StockArithmetic::totalAmount((string) $data['amount'], 'amount');
             if ($amount === 0) {
                 throw ValidationException::withMessages(['amount' => 'Record a positive amount that has actually left the shop.']);
@@ -41,7 +48,7 @@ class OwnerOutflowService
             if ($data['payment_method'] === 'mpesa' && MpesaCodes::exists($data['payment_reference'])) {
                 throw ValidationException::withMessages(['payment_reference' => 'This M-Pesa code was already recorded. Check the existing entry.']);
             }
-            $outflow = CashOutflow::create(['submission_key' => $data['submission_key'], 'payload_hash' => $hash, 'kind' => $data['kind'], 'category' => $data['kind'] === 'expense' ? $data['category'] : null,
+            $outflow = CashOutflow::create(['replaces_outflow_id' => $data['replaces_outflow_id'] ?? null, 'submission_key' => $data['submission_key'], 'payload_hash' => $hash, 'kind' => $data['kind'], 'category' => $data['kind'] === 'expense' ? $data['category'] : null,
                 'recipient' => $data['recipient'], 'reason' => $data['reason'], 'payment_method' => $data['payment_method'], 'payment_reference' => $data['payment_method'] === 'mpesa' ? $data['payment_reference'] : null,
                 'amount_minor' => $amount, 'actor_id' => $actor->id, 'effective_on' => now('Africa/Nairobi')->toDateString(), 'created_at' => now()]);
             AccessAudit::record('outflow.recorded', $actor, null, $data['reason'], null, $outflow->only(['kind', 'category', 'recipient', 'amount_minor', 'payment_method', 'payment_reference', 'effective_on']), 'cash_outflow', $outflow->id);

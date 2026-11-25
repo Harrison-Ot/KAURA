@@ -22,7 +22,7 @@ class FinancialReportService
             $sales = DB::table('sales')->where('status', 'posted')->whereBetween('business_date', [$from, $to])->get(['sold_by', 'gross_minor', 'discount_minor', 'total_minor', 'cost_total_minor']);
             $payments = DB::table('payments')->whereBetween('business_date', [$from, $to])->get(['handled_by', 'method', 'status', 'purpose', 'amount_minor']);
             $outflows = DB::table('cash_outflows')->whereBetween('effective_on', [$from, $to])->get(['actor_id', 'kind', 'category', 'payment_method', 'amount_minor']);
-            $operations = DB::table('shop_operations')->leftJoin('cash_outflows', 'cash_outflows.id', '=', 'shop_operations.cash_outflow_id')->whereBetween('business_date', [$from, $to])->select('shop_operations.*', 'cash_outflows.kind as original_kind')->get();
+            $operations = DB::table('shop_operations')->leftJoin('cash_outflows', 'cash_outflows.id', '=', 'shop_operations.cash_outflow_id')->leftJoin('sales as operation_sales', 'operation_sales.id', '=', 'shop_operations.sale_id')->whereBetween('shop_operations.business_date', [$from, $to])->select('shop_operations.*', 'cash_outflows.kind as original_kind', 'operation_sales.sold_by as sale_seller')->get();
             $returns = $operations->where('kind', 'return');
             $reversals = $operations->whereIn('kind', ['outflow_reversal', 'receipt_reversal']);
             $cashAdjustments = $this->sum($operations->where('payment_method', 'cash'), 'cash_amount_minor');
@@ -58,7 +58,7 @@ class FinancialReportService
                 'net_cash_movement' => $this->money($cashIn->minus($cashOut)),
             ];
             $summary['stock_purchases'] = $this->money($this->sum($outflows->where('kind', 'stock_purchase'), 'amount_minor')->minus($this->sum($reversals->where('original_kind', 'stock_purchase'), 'amount_minor')));
-            $employeeIds = $sales->pluck('sold_by')->merge($payments->pluck('handled_by'))->merge($outflows->pluck('actor_id'))->merge($operations->pluck('actor_id'))->unique();
+            $employeeIds = $sales->pluck('sold_by')->merge($payments->pluck('handled_by'))->merge($outflows->pluck('actor_id'))->merge($operations->pluck('actor_id'))->merge($operations->pluck('sale_seller')->filter())->unique();
             $employees = User::query()->whereIn('id', $employeeIds)->orderBy('name')->get()->map(function (User $user) use ($sales, $payments, $outflows, $operations): array {
                 $ownSales = $sales->where('sold_by', $user->id);
                 $ownPayments = $payments->where('handled_by', $user->id);
@@ -66,7 +66,7 @@ class FinancialReportService
                 $cash = $this->sum($ownPayments->where('status', 'verified')->where('method', 'cash'), 'amount_minor');
                 $out = $this->sum($ownOutflows->where('payment_method', 'cash'), 'amount_minor')->plus($this->sum($operations->where('actor_id', $user->id)->where('payment_method', 'cash'), 'cash_amount_minor'));
 
-                return ['id' => $user->id, 'name' => $user->name, 'active' => $user->is_active, 'sale_count' => $ownSales->count(), 'net_sales' => $this->money($this->sum($ownSales, 'total_minor')),
+                return ['id' => $user->id, 'name' => $user->name, 'active' => $user->is_active, 'sale_count' => $ownSales->count(), 'net_sales' => $this->money($this->sum($ownSales, 'total_minor')->minus($this->sum($operations->where('kind', 'return')->where('sale_seller', $user->id), 'amount_minor'))),
                     'cash_confirmed' => $this->money($cash), 'mpesa_verified' => $this->money($this->sum($ownPayments->where('status', 'verified')->where('method', 'manual_mpesa'), 'amount_minor')),
                     'mpesa_pending' => $this->money($this->sum($ownPayments->where('status', 'pending')->where('method', 'manual_mpesa'), 'amount_minor')),
                     'mpesa_disputed' => $this->money($this->sum($ownPayments->where('status', 'disputed')->where('method', 'manual_mpesa'), 'amount_minor')),

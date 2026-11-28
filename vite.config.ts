@@ -65,6 +65,7 @@ export default defineConfig({
         htmlWhitespaceSensitivity: 'css',
         ignorePatterns: [
             '.github/**',
+            'docs/Kaura_Hardware_Inventory_Product_Brief_v0.1. working draft.md',
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',

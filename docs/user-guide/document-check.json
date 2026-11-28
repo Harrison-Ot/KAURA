@@ -1,0 +1,79 @@
+{
+  "pdf_pages": 14,
+  "word_paragraphs": 265,
+  "word_tables": 11,
+  "checks": [
+    {
+      "page": 1,
+      "title": "Kaura Hardware User guide",
+      "text_characters": 1632
+    },
+    {
+      "page": 2,
+      "title": "Find the right screen",
+      "text_characters": 2134
+    },
+    {
+      "page": 3,
+      "title": "Complete a cash sale",
+      "text_characters": 1983
+    },
+    {
+      "page": 4,
+      "title": "Record and verify manual M-Pesa",
+      "text_characters": 2083
+    },
+    {
+      "page": 5,
+      "title": "Customers, discounts and credit sales",
+      "text_characters": 2146
+    },
+    {
+      "page": 6,
+      "title": "Collect debt and use retained credit",
+      "text_characters": 2255
+    },
+    {
+      "page": 7,
+      "title": "Physical counts and whole-sale voids",
+      "text_characters": 2011
+    },
+    {
+      "page": 8,
+      "title": "Partial returns and refunds",
+      "text_characters": 2097
+    },
+    {
+      "page": 9,
+      "title": "Products and supplier deliveries",
+      "text_characters": 2042
+    },
+    {
+      "page": 10,
+      "title": "Expenses, withdrawals and corrections",
+      "text_characters": 2163
+    },
+    {
+      "page": 11,
+      "title": "Set up opening records and imports",
+      "text_characters": 2311
+    },
+    {
+      "page": 12,
+      "title": "Close the day and hand over cash",
+      "text_characters": 2110
+    },
+    {
+      "page": 13,
+      "title": "Understand reports and exports",
+      "text_characters": 2536
+    },
+    {
+      "page": 14,
+      "title": "Accounts, help and safe use",
+      "text_characters": 2605
+    }
+  ],
+  "confidential_test_passwords_included": false,
+  "review": "PDF page count, section headings, text presence and editable Word structure checked."
+}

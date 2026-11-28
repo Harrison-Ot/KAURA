@@ -1,0 +1,934 @@
+{
+  "title": "Kaura Hardware User Guide",
+  "version": "1.0",
+  "date": "25 November 2026",
+  "pages": [
+    {
+      "title": "Kaura Hardware\nUser guide",
+      "audience": "For employees and the shop owner",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Stock, sales, customer balances and daily cash in one workspace. Keep this guide at the counter or share it with new staff."
+        },
+        {
+          "type": "note",
+          "title": "Before you start",
+          "text": "The owner must approve the real opening balances before new sales can be posted. If a DEMO DATA banner appears, the records are for practice. Do not treat demo figures or payment details as real shop instructions."
+        },
+        {
+          "type": "h",
+          "text": "Your shop details"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Item",
+            "Complete before sharing"
+          ],
+          "rows": [
+            [
+              "System website",
+              "________________________________________"
+            ],
+            [
+              "Shop owner / supervisor",
+              "________________________________________"
+            ],
+            [
+              "Help contact",
+              "________________________________________"
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "First sign-in"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open the website provided by the owner and choose Sign in.",
+            "Use your own email and password. The owner creates staff accounts; Join the team explains how to get access.",
+            "If asked, replace your temporary password and verify your email. If you cannot continue, ask the owner.",
+            "Choose Checkout to start a sale. On a phone, use Products to add items and Cart to review them."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Keep these rules in mind"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Use your own account. Never share passwords or approve an action through someone else's account.",
+            "Check the selling unit: a bag, kilogram and piece are separate listings.",
+            "Pending M-Pesa is a recorded claim, not confirmed money.",
+            "A saved draft or approval request does not post a sale or change stock.",
+            "All examples in this guide are for training. Enter the actual quantities, money and references."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Version 1.0 | 25 November 2026 | Currency: Kenyan shillings (KES) | Shop days: Africa/Nairobi"
+        }
+      ]
+    },
+    {
+      "title": "Find the right screen",
+      "audience": "Everyone",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "The sidebar groups similar tasks together. Tap a group to open its links. Only one group opens at a time. On a phone, use the menu button near the top-left. The current page is highlighted."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Menu",
+            "What you will find"
+          ],
+          "rows": [
+            [
+              "Dashboard",
+              "Payment reminders and workspace shortcuts."
+            ],
+            [
+              "Checkout",
+              "Build a cart and complete a sale."
+            ],
+            [
+              "Reports & insights (owner)",
+              "Financial totals, trends, stock, debt and team activity."
+            ],
+            [
+              "Sales & customers",
+              "Sales, Customers and Sale approvals. Owners also see Voided sale review and Returns & corrections."
+            ],
+            [
+              "Inventory",
+              "Products and Stock counts. Owners also see Stock & opening balances and Import catalogue."
+            ],
+            [
+              "Payments & cash",
+              "Collections, Collect instalment and My day & cash. Owners also see Payment verification and Money out."
+            ],
+            [
+              "Administration (owner)",
+              "Employees, Shop settings and Audit history."
+            ],
+            [
+              "Your name, at the bottom",
+              "Personal Settings and Log out."
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Using checkout on a phone"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Products and Cart are separate views. You do not need to scroll past the product list to find the cart.",
+            "The bottom cart bar shows the number of product lines and the current total. Tap View cart to open it; tap Add products to return.",
+            "Swipe inside the product list to browse. A long cart has its own scrollable item list.",
+            "Search by product name, SKU or barcode. Adding an item already in the cart opens its quantity field instead of duplicating it.",
+            "Switching views preserves the current cart. The item count is the number of different product lines, not the sum of their quantities."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Guide finder"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Task",
+            "Section"
+          ],
+          "rows": [
+            [
+              "Cash sale / manual M-Pesa",
+              "3 / 4"
+            ],
+            [
+              "Customers, discounts and credit / instalments and retained credit",
+              "5 / 6"
+            ],
+            [
+              "Counts and voids / partial returns and refunds",
+              "7 / 8"
+            ],
+            [
+              "Products and deliveries / expenses and corrections",
+              "9 / 10"
+            ],
+            [
+              "Opening balances / daily cash handover",
+              "11 / 12"
+            ],
+            [
+              "Reports / account management and troubleshooting",
+              "13 / 14"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Access follows your role",
+          "text": "Employees see their own sales and collection records. Owner-only pages will not appear in an employee account. If access is refused, ask the owner; do not use another person's login."
+        }
+      ]
+    },
+    {
+      "title": "Complete a cash sale",
+      "audience": "Employees and owner",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Open Checkout"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Find the product by name, SKU or barcode. Check its exact selling unit, price and available stock.",
+            "Select the product to add it. Keep adding the different products required. Products with no available stock cannot be sold.",
+            "Open Cart. Enter the quantity for each product. Use only the decimal places allowed by that listing. Remove unwanted lines.",
+            "Review each line total and the overall total. Select a customer if helpful for follow-up; ordinary fully paid cash sales can use Walk-in customer.",
+            "Choose Cash as the payment method. Count the money and enter Cash received (KES).",
+            "Check the displayed change and give the correct change to the customer. If the cash is short, request owner-approved credit instead of pretending the sale is fully paid.",
+            "Choose Confirm cash payment and post sale once. Wait for the saved sale to open.",
+            "Check the saved sale reference and use Open printable receipt if a receipt is needed. Use the receipt page's Print button."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Worked example"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Sale",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "2 bags at KES 800 each",
+              "KES 1,600.00"
+            ],
+            [
+              "Cash received",
+              "KES 2,000.00"
+            ],
+            [
+              "Change to give the customer",
+              "KES 400.00"
+            ],
+            [
+              "Cash collection recorded",
+              "KES 1,600.00"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Stock and prices are checked again",
+          "text": "If stock or price changed while the cart was open, review the message. Refresh prices and stock, check the customer's order, and confirm the current price before trying again. Do not reduce the price yourself."
+        },
+        {
+          "type": "h",
+          "text": "If the connection fails"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "First check Sales or Collections for the saved transaction and reference.",
+            "If the same checkout is still on screen, retry it without starting a second copy of the sale.",
+            "A posted sale opens a saved record. A cart remaining on screen is not proof that posting succeeded.",
+            "Do not refresh or close the checkout page to save a draft. The current cart stays in that screen; it is not a guaranteed saved order across a reload or sign-out."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Record and verify manual M-Pesa",
+      "audience": "Employees record; owner verifies",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "At the counter"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Build and review the cart, then choose Manual M-Pesa.",
+            "Read the receiving number displayed on screen. Ask the customer to pay that number. Use the actual displayed number, not a number remembered from an earlier day.",
+            "Record the exact amount sent and the M-Pesa transaction code. Add the payer name/reference if known.",
+            "Check the code against the customer's payment information. A code already recorded cannot be used for another transaction.",
+            "Choose Record pending M-Pesa and post sale. The saved sale shows the payment as pending.",
+            "Tell the customer that owner verification is pending. A pending receipt does not itself confirm that M-Pesa funds reached the shop."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "No code or a changed number?",
+          "text": "Without a transaction code, keep the cart unposted and ask the owner. If the receiving number changed, confirm where the customer actually paid before using the updated number and clearing old payment details."
+        },
+        {
+          "type": "h",
+          "text": "Owner verification"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Payments & cash > Payment verification. Open the payment to review it.",
+            "Compare its amount, code, receiving-number snapshot and payer information with the receiving phone's messages or statement.",
+            "Choose verified only when the funds match. Choose disputed if the claim cannot be confirmed, and give a clear reason.",
+            "Save the owner decision. Recheck the sale balance or customer statement. Do not create a new payment just to change a disputed status."
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Status",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "Pending",
+              "Recorded, awaiting the owner. Excluded from confirmed collections; debt is not settled by this claim."
+            ],
+            [
+              "Verified / Confirmed",
+              "The owner confirmed receipt. Eligible debt is settled through the recorded allocations."
+            ],
+            [
+              "Disputed",
+              "Not confirmed. The original sale and payment stay visible and the unpaid balance requires follow-up."
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "text": "A receiving-number change applies to future manual payments. Old payment records retain their original number. This workflow does not send an automatic STK Push prompt."
+        }
+      ]
+    },
+    {
+      "title": "Customers, discounts and credit sales",
+      "audience": "Employees request; owner approves",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Find or add a customer"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Sales & customers > Customers. Search by name or contact before adding anyone.",
+            "If the customer is missing, choose Add customer and enter the actual name and contact. Review any suggested duplicate.",
+            "If similar records or shared contacts exist, confirm the correct person. Do not put a new debt under the wrong customer.",
+            "The owner can edit customer details and set a credit limit. Employees cannot set or increase that limit."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Request a discount or credit"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "In Checkout, build the exact cart and select the named customer for credit. Choose the intended cash or manual M-Pesa method.",
+            "Open Request owner discount / credit approval. Enter the requested discount, requested credit balance, promised repayment date for credit, and a reason.",
+            "Choose Save cart and request approval. This is a request, not a completed sale; it does not reserve stock.",
+            "Ask the owner to open Sales & customers > Sale approvals in their own account. The owner reviews the exact customer, items, quantities, discount, credit and promised date.",
+            "The owner chooses Approve exact terms or Reject request, gives a reason and sets an approval lifetime, then saves the decision.",
+            "Return to your approved request. Under Complete this sale, collect the displayed deposit and enter the payment details. For full approved cash credit with no deposit, enter zero cash tendered.",
+            "Choose Post approved sale once. Print/check the saved receipt and promised balance. Only the staff member who requested that approval can complete it."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Approval has limits",
+          "text": "Use approval before it expires. A changed cart, customer, price or unavailable stock can invalidate it. A credit sale must fit the customer's available limit at posting; only the owner can change a limit separately."
+        },
+        {
+          "type": "p",
+          "text": "Training example: a KES 3,000 sale with a KES 1,000 deposit leaves KES 2,000 of approved credit. Enter the customer's actual promised repayment date. A manual M-Pesa deposit remains pending until verified."
+        }
+      ]
+    },
+    {
+      "title": "Collect debt and use retained credit",
+      "audience": "Employees collect; owner adjusts credit",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Receive an instalment"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Payments & cash > Collect instalment. Select the correct customer.",
+            "Enter the actual amount received and choose Cash or Manual M-Pesa. For M-Pesa, record the code and confirm the displayed receiving number.",
+            "Review the amount. The system rejects overpayment and amounts that overlap existing pending claims. Ask the owner to investigate instead of creating another payment.",
+            "Confirm cash and allocate oldest-first, or record the M-Pesa claim as pending.",
+            "Open/check the saved payment receipt. Confirmed payments settle the oldest eligible opening debt or sale first, then the next one.",
+            "Use Print on the payment receipt if required. The owner can inspect the full customer statement and allocation history."
+          ]
+        },
+        {
+          "type": "p",
+          "text": "Example: the oldest debt is KES 500 and the next is KES 800. A confirmed KES 900 payment clears the first debt and pays KES 400 of the second, leaving KES 400. A pending M-Pesa claim does not yet make those confirmed reductions."
+        },
+        {
+          "type": "h",
+          "text": "Owner: retained customer credit"
+        },
+        {
+          "type": "p",
+          "text": "Retained credit is money the shop owes the customer, usually kept after an owner-resolved void. It is separate from an unpaid customer debt."
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Apply it to debt: open the customer statement and choose Apply retained credit / write off debt. Select the credit-offset action, the oldest outstanding debt and the customer's available retained credit. Enter the amount and a reason, then confirm.",
+            "Use it at checkout: select that customer and Cash. Choose their retained credit, enter the amount to apply, and collect only the remaining cash. Enter zero cash received if credit covers the whole sale.",
+            "Pay it out: use the payout controls on the customer statement to record the actual remaining-credit payout, recipient, method and reason.",
+            "Write off debt: the owner selects the write-off action, identifies the debt, enters the amount and a reason, and confirms. A write-off is not a cash collection."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Check unresolved payments first",
+          "text": "Resolve the customer's pending M-Pesa claims before a debt adjustment. The same credit balance cannot be used twice, and credit must belong to that customer."
+        }
+      ]
+    },
+    {
+      "title": "Physical counts and whole-sale voids",
+      "audience": "Employees submit; owner reviews",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Report a physical stock count"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Inventory > Stock counts and choose Record a physical count.",
+            "Select the exact SKU/unit and count the actual goods. Record the observed quantity and explain any discrepancy.",
+            "Review the expected quantity, counted quantity and difference, then choose Submit count for owner review.",
+            "Wait for the owner. Submission alone does not change sellable stock.",
+            "The owner opens the count, checks the physical evidence, selects Approve adjustment or Reject count, records a reason, and saves the decision.",
+            "If stock changed after the count, make a fresh count/review. Do not use an old count to overwrite more recent sales or deliveries."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Void an entire sale"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Sales & customers > Sales and locate the original sale. Employees can only access and void their own eligible sales; the owner can review any sale.",
+            "Open the sale, use Void, and give a specific reason. Check the reference carefully.",
+            "The original sale remains in history with its void reason and actor. Voiding does not automatically refund money or restore goods to sellable stock.",
+            "The owner opens Sales & customers > Voided sale review, resolves any pending payment claims, and checks whether goods are actually present and resellable.",
+            "The owner records the stock disposition. If confirmed money exists, the owner explicitly resolves it as an actual refund or retained customer credit and supplies the required details."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Choose the right workflow",
+          "text": "Use a void for an eligible whole-sale cancellation. Use the owner return workflow for selected items or quantities. A sale with earlier returns or debt adjustments must use remaining-item returns instead of a later whole-sale void."
+        },
+        {
+          "type": "p",
+          "text": "Never delete a sale, change a stock figure directly, or pay a refund without owner authorization. Damaged or missing goods must not be added to available stock."
+        }
+      ]
+    },
+    {
+      "title": "Partial returns and refunds",
+      "audience": "Owner only",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Review the return before paying"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Find and open the original sale under Sales. Choose Return items / review refund.",
+            "Select the original sale item and enter the quantity being returned. It cannot exceed the quantity still unreturned.",
+            "Choose the goods decision: Received and resellable, Received damaged, or Not received. Only resellable goods can become available stock.",
+            "Enter the refund recipient and the intended refund method. For an M-Pesa refund, use the new outgoing transaction code.",
+            "Choose Preview exact return amounts. Read the return value, debt reduction and Refund to record. Do not pay an estimated amount before this preview.",
+            "If the amounts or original payment status need investigation, stop and resolve that first. A changed balance requires a fresh preview.",
+            "After reviewing the goods and financial facts, carry out any refund actually due. Enter a clear reason and record the payment evidence.",
+            "Tick the confirmation only when the details are correct and any stated refund actually occurred. Choose Confirm and post operation once.",
+            "Review the new operation history and original sale. Original prices/payments stay visible, with linked adjustments.",
+            "For another item, perform another linked return. Damaged goods remain outside sellable stock and are visible in damaged-goods reporting."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "How a refund is calculated"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Training example",
+            "Effect"
+          ],
+          "rows": [
+            [
+              "Returned goods value",
+              "KES 1,000.00"
+            ],
+            [
+              "Remaining sale debt before return",
+              "KES 600.00"
+            ],
+            [
+              "Debt reduced first",
+              "KES 600.00"
+            ],
+            [
+              "Refund due, if already settled funds cover it",
+              "KES 400.00"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "A return is not a new sale",
+          "text": "The system uses the original discounted line values and allocated cost. It will not refund more than the settled funds available. Pending checkout payments must be resolved before returning that sale."
+        },
+        {
+          "type": "p",
+          "text": "Use Sales & customers > Returns & corrections to inspect the reason, actor, cash adjustment, debt reduction and original record. Retrying the same saved submission must not create another refund."
+        }
+      ]
+    },
+    {
+      "title": "Products and supplier deliveries",
+      "audience": "Owner only",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Add or update a product"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Inventory > Products. Choose Add product. Add the category first if needed.",
+            "Enter SKU, name, exact selling unit, allowed quantity precision, selling price, purchase cost if known, reorder level and optional barcode.",
+            "Check similar listings before saving. Keep a bag, kilogram and piece as separate products. A new product starts with zero stock.",
+            "Use an approved opening count or stock delivery to supply quantities. Do not treat the product form as a stock receipt.",
+            "For later price/cost changes, open the product edit screen, give the required reason, and save. Old sales retain their saved prices and costs.",
+            "Use the active flag to stop a product being used in new sales while preserving its history."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Receive and pay for a delivery"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Inventory > Stock & opening balances and start a Stock delivery.",
+            "Enter the delivery date, supplier, unique delivery reference and source/delivery note.",
+            "Add each SKU with the correct unit, quantity and unit cost, or use the CSV template.",
+            "Enter the full amount paid and Cash or M-Pesa. Record the outgoing M-Pesa code when applicable. Supplier deliveries are paid in full.",
+            "Choose Save draft and review. Inspect every line, the total and payment details. A draft changes neither stock nor cash.",
+            "On the review screen, give the approval reason, confirm the review and choose Approve and post once.",
+            "Check the posted reference and updated stock. The supplier payment is recorded once as a stock purchase."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Avoid common stock mistakes",
+          "text": "Do not also enter the supplier payment as an operating expense. Do not assume that selling kilograms automatically reduces the stock of a bag listing. Automatic unit conversion is unavailable."
+        },
+        {
+          "type": "p",
+          "text": "When physical stock differs from the system, use a count and owner-approved adjustment. Missing costs stay unknown and cause incomplete-valuation warnings; do not invent a purchase cost."
+        }
+      ]
+    },
+    {
+      "title": "Expenses, withdrawals and corrections",
+      "audience": "Owner only",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Record money leaving the shop"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Payments & cash > Money out, then choose Record expense or withdrawal.",
+            "Choose Operating expense or Owner withdrawal. For an expense, select the appropriate category such as rent, transport, electricity, wages or other.",
+            "Enter the actual amount, recipient, reason and payment method. Use the actual M-Pesa code when applicable.",
+            "Review the effect and confirm posting once. Entries use the current Nairobi business day.",
+            "Inspect the saved payment. Stock purchases belong in the delivery workflow, not this expense form."
+          ]
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Type",
+            "Effect"
+          ],
+          "rows": [
+            [
+              "Operating expense",
+              "Reduces funds and recorded operating-profit estimate."
+            ],
+            [
+              "Stock purchase",
+              "Adds inventory cost and records the supplier payment; not a second operating expense."
+            ],
+            [
+              "Owner withdrawal",
+              "Reduces funds but is not an operating expense or a profit deduction."
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Correct a posted expense or withdrawal"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open the original money-out record and choose Record returned funds / linked reversal.",
+            "Confirm the real financial facts, returned amount, payer/recipient, method and reason. Do not describe money as returned if it was not.",
+            "Confirm and post the reversal. The original payment stays visible.",
+            "If a corrected replacement is needed, create it and fill in Replaces reversed money-out entry with the original ID. Keep the same transaction type and explain the replacement."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Correct a supplier delivery"
+        },
+        {
+          "type": "p",
+          "text": "A full linked delivery reversal is permitted only when its products have no later stock movements. Confirm the goods returned to the supplier and the money returned to the shop. A replacement delivery links to the original batch ID. If the system refuses because goods have since moved, use a fresh owner-approved physical count and resolve the financial difference separately."
+        },
+        {
+          "type": "note",
+          "title": "Read original and net figures correctly",
+          "text": "Money out preserves original payment values. Returns & corrections holds linked reversals and partial-return refunds. Reports & insights combines their net financial effects. A previously recorded M-Pesa code stays reserved."
+        }
+      ]
+    },
+    {
+      "title": "Set up opening records and imports",
+      "audience": "Owner: before the first real trading day",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Opening records bring paper balances into the system. They are not a way to recreate old sales. Coordinate the chosen as-of date with the person responsible for the paper records."
+        },
+        {
+          "type": "h",
+          "text": "1. Prepare the catalogue"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Enter the real shop identity and receiving number in Administration > Shop settings.",
+            "Prepare the product listings. For a file, open Inventory > Import catalogue. Use UTF-8 CSV, the exact headers shown, and no more than 500 rows.",
+            "Validate and preview the file. Review duplicate identities, similar names, categories, units, price precision and blank/unknown purchase costs.",
+            "Confirm the reviewed listings. They start at zero stock. A posted import must not be posted again to add quantities."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "2. Prepare stock and customers"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Physically count every active SKU, including explicit zero counts.",
+            "Create and review customer names/contacts before importing their unpaid opening debts.",
+            "In Stock & opening balances, prepare opening-stock and opening-debt drafts with the same as-of date and a clear paper-source note. Download the appropriate CSV template if needed.",
+            "Opening debt can use customer IDs, or the alternative headers customer_name,contact,amount,due_on. Name/contact rows must match exactly one reviewed customer. Resolve missing or ambiguous matches before posting.",
+            "Check all preview rows, totals, units, due dates and missing costs. Approve and post each correct draft; cancel incorrect drafts and prepare a new review."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "3. Reconcile and sign off"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Compare the posted opening stock and debt summary with the actual paper totals. Investigate differences.",
+            "Ensure every active product has an opening count and no draft is awaiting a decision.",
+            "Open Sign off opening balances. Enter the paper debt total, matching date and reason, then choose Approve opening balances.",
+            "Only start recording new real sales after this sign-off. Keep the paper summary and approval evidence for reference."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Ask for help rather than forcing a mismatch",
+          "text": "A missing customer, different unit or wrong total must be corrected before posting/sign-off. Unknown opening costs are allowed but keep valuation and profit estimates incomplete."
+        }
+      ]
+    },
+    {
+      "title": "Close the day and hand over cash",
+      "audience": "Employees submit; owner counts and reviews",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Employee handover"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open Payments & cash > My day & cash. Select the correct Nairobi business day.",
+            "Review your net recorded cash movement and the M-Pesa amounts split by status.",
+            "Count the actual cash you are handing to the owner. Record it under Cash handed over (KES).",
+            "Write a useful note about change, the opening float, separately supplied cash, or any unexplained difference.",
+            "Submit my handover once. The owner must count the money independently. Do not enter an expected figure merely to make the numbers agree."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Owner review"
+        },
+        {
+          "type": "steps",
+          "items": [
+            "Open My day & cash and select the same day. Review the employee accounts.",
+            "Count the actual cash received. Enter Actual cash received (KES), a reconciliation note and any discrepancy explanation.",
+            "Confirm the counted cash and record the owner review. Compare the difference with the current recorded net cash.",
+            "Review the real M-Pesa statement separately and verify/dispute pending payments. Cash handover does not verify M-Pesa.",
+            "If activity changes after submission/review, the page flags it. Investigate the late postings and perform a supplementary owner review when required. Earlier evidence remains in audit history."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Cash movement example"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Recorded activity",
+            "KES"
+          ],
+          "rows": [
+            [
+              "Confirmed cash sales and instalments",
+              "8,000.00"
+            ],
+            [
+              "Recorded cash outflows/refunds",
+              "1,500.00"
+            ],
+            [
+              "Net recorded cash movement",
+              "6,500.00"
+            ]
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Net movement is not automatically the drawer balance",
+          "text": "Opening floats, external funding and other physical cash differences need explanation. Negative net movement means the shop supplied funds overall. Handing over cash does not create another sale or collection."
+        },
+        {
+          "type": "h",
+          "text": "Daily close checklist"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Confirm all intended sales and repayments have saved references.",
+            "Investigate pending/disputed M-Pesa and overdue customer promises.",
+            "Reconcile physical cash, late transactions and notes.",
+            "Ask the owner to review unresolved counts, approvals, voids and refunds.",
+            "Log out through your name menu when leaving the device."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Understand reports and exports",
+      "audience": "Owner only",
+      "blocks": [
+        {
+          "type": "p",
+          "text": "Open Reports & insights. Choose the date range and Update report, or use a one-, seven-, thirty- or ninety-day shortcut. The dates are Nairobi shop days. Current debt and stock are labelled separately from selected-period activity."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Report area",
+            "Use it to"
+          ],
+          "rows": [
+            [
+              "Overview",
+              "Compare daily net sales and confirmed collections; follow pending-payment, low-stock, count and approval queues."
+            ],
+            [
+              "Products & stock",
+              "Review sold quantities, sales, margin, current balances and known inventory value; search or show low stock. Inspect damaged-goods history."
+            ],
+            [
+              "Customer debt",
+              "Prioritize overdue accounts using aging buckets. Open the customer statement for detail."
+            ],
+            [
+              "Team & cash",
+              "Review each seller/collector and physical cash handovers. Select an account to narrow the table."
+            ],
+            [
+              "Financial detail",
+              "Inspect discounts, returns, costs, expenses, stock purchases, withdrawals, refunds, write-offs and retained-credit offsets."
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Read these figures correctly"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Metric",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "Net sales",
+              "Posted sales after approved discounts and returns; voided sales are excluded. Opening debts and repayments do not create new sales."
+            ],
+            [
+              "Confirmed collections",
+              "Cash plus verified M-Pesa, including repayments of older debt. Pending/disputed M-Pesa is separate."
+            ],
+            [
+              "Gross margin estimate",
+              "Net sales less saved cost of goods sold. Missing historical costs prevent a complete estimate."
+            ],
+            [
+              "Operating-profit estimate",
+              "Margin less recorded operating expenses. Stock purchases and owner withdrawals are excluded as profit deductions. Read the report notes for other exclusions."
+            ],
+            [
+              "Customer debt / inventory value",
+              "Current balances at report generation time, not historical closing balances for the selected dates."
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Download or print"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Choose the CSV next to the relevant dataset. Product, debt and team filters carry into their exports, including rows beyond the current table page.",
+            "The full Financial CSV covers all accounts in the selected period.",
+            "In detailed CSVs, a column ending _minor is KES cents: 120050 means KES 1,200.50. Check headers/units before using a spreadsheet total.",
+            "Print view prints the currently selected report view. Change tabs first if you need a different view."
+          ]
+        },
+        {
+          "type": "note",
+          "title": "Use reports to investigate, not to hide a difference",
+          "text": "Sales are not the same as cash collected. Seller and collector can be different people. A refund is attributed to the person paying it; returned revenue reduces the original seller's sales. Inspect the linked transactions when totals need explanation."
+        }
+      ]
+    },
+    {
+      "title": "Accounts, help and safe use",
+      "audience": "Everyone; owner tasks labelled",
+      "blocks": [
+        {
+          "type": "h",
+          "text": "Owner: staff and shop settings"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Administration > Employees: create each employee account, share its temporary password privately, and require first-use password replacement/email verification. Deactivate access when someone leaves; historical records remain.",
+            "Administration > Shop settings: change real shop details or the manual M-Pesa number with a reason and number confirmation. Old payments keep their saved receiving number.",
+            "Administration > Audit history: inspect sensitive actions, actors, reasons and before/after details.",
+            "Arrange regular backups and a recovery rehearsal with the system administrator. Do not attempt to repair business mistakes by deleting data or restoring a database yourself."
+          ]
+        },
+        {
+          "type": "h",
+          "text": "Common problems"
+        },
+        {
+          "type": "table",
+          "headers": [
+            "What you see",
+            "What to do"
+          ],
+          "rows": [
+            [
+              "Cannot sign in / access revoked",
+              "Check the email and password, use Forgot your password? if available, or ask the owner. Do not use another account."
+            ],
+            [
+              "Opening balances not approved",
+              "Ask the owner to complete setup and sign-off. Do not use a test transaction to bypass the message."
+            ],
+            [
+              "Price changed / insufficient stock",
+              "Refresh prices and stock, reconfirm the order and use the current price. Request a fresh approval if needed."
+            ],
+            [
+              "Approval expired or cart changed",
+              "Open Sale approvals and request fresh approval for the exact new terms."
+            ],
+            [
+              "M-Pesa code already used",
+              "Find the original payment. Do not alter the code or enter another payment to bypass the check."
+            ],
+            [
+              "Connection failed after confirmation",
+              "Look for the saved sale/payment first. If the original checkout is still open, retry the same submission; avoid a second sale."
+            ],
+            [
+              "Count stale / return amount changed",
+              "Recount stock or refresh the return preview, then review again."
+            ],
+            [
+              "Permission denied / missing owner menu",
+              "Ask the owner to perform the authorized task in their own account."
+            ],
+            [
+              "Printer not working",
+              "Use the saved receipt's print page and check the selected printer or Save as PDF. Ask for help; do not post the sale again."
+            ]
+          ]
+        },
+        {
+          "type": "h",
+          "text": "When asking for help"
+        },
+        {
+          "type": "p",
+          "text": "Give the owner the screen name, sale/payment/reference number, business date, exact message and what you were trying to do. Share a screenshot only through an approved channel and avoid exposing customer or payment details unnecessarily."
+        },
+        {
+          "type": "note",
+          "title": "Keep access personal",
+          "text": "Log out on shared devices. Never share passwords, verification codes or M-Pesa PINs. The system records manual M-Pesa; it does not collect a customer's PIN or activate live STK Push. Shop tax settings saved for future review do not make a receipt a tax-compliant invoice."
+        }
+      ]
+    }
+  ]
+}

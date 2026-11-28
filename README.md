@@ -1,8 +1,8 @@
 # Kaura Hardware Inventory
 
-The supplied [product brief](docs/Kaura_Hardware_Inventory_Product_Brief_v0.1.%20working%20draft.md) is preserved in the project. See the [implementation review](docs/implementation-status.md) for requirement-by-requirement status and remaining first-release work. The first release is not yet complete.
+The supplied [product brief](docs/Kaura_Hardware_Inventory_Product_Brief_v0.1.%20working%20draft.md) is preserved in the project. See the [implementation review](docs/implementation-status.md) for requirement-by-requirement status and remaining first-release work. Application workflows are implemented; real shop and target deployment acceptance remain open.
 
-Laravel, Inertia, React and TypeScript application for one hardware shop. Account access, catalogue, customers, owner settings, opening stock/debt review, supplier deliveries, cash/manual M-Pesa checkout, discount/credit approval, deposits, oldest-first instalments, owner payment verification, physical counts with owner-approved stock adjustments, owner expenses/withdrawals, financial reports with account activity, CSV exports, collection lists, sale voids with owner goods review and printable receipts are implemented. Full void refunds and retained customer-credit balances are implemented. Partial returns, credit redemption/offset and physical cash reconciliation remain under development.
+Laravel, Inertia, React and TypeScript application for one hardware shop. Account access, catalogue, customers, owner settings, opening stock/debt review, supplier deliveries, cash/manual M-Pesa checkout, discount/credit approval, deposits, oldest-first instalments, owner payment verification, physical counts with owner-approved stock adjustments, owner expenses/withdrawals, financial reports with account activity, CSV exports, collection lists, sale voids with owner goods review and printable receipts are implemented. Full void refunds and retained customer-credit balances are implemented. Reviewed partial returns, retained-credit checkout/offset, reasoned debt write-offs, linked correction/replacement records, catalogue import, cash handover/reconciliation and detailed report exports are implemented. Real shop pilot and target-environment checks remain.
 
 ## Local setup
 
@@ -292,9 +292,22 @@ The retained-credit payout migration adds source-linked, uniquely keyed payout r
 
 To roll back a deployment, enter maintenance mode, preserve/export audit events and restore matching code/database backups. Employee reactivation and stock corrections use their explicit application workflows instead.
 
-## Next implementation slices
+## Remaining deployment acceptance
 
-1. Retained-credit redemption/offset, partial returns and explicit financial corrections.
-2. Bulk catalogue import, physical cash handover/reconciliation and a pilot using real opening records.
+1. Actual shop accounts, payment number and opening balances, independently reconciled and signed off by the owner.
+2. PostgreSQL integration, physical printer and production hosting/mail validation.
 
 Use integer KES minor units, fixed decimal quantities, explicit stock movements and payment allocations. Pending M-Pesa must not settle confirmed debt or collections. Production PostgreSQL is proposed; the current development setup remains unchanged. Live STK Push is deferred.
+
+## November 24 completion work
+
+See [implementation status](docs/implementation-status.md) and [operator guidance](docs/operator-guide.md). Added partial returns with an exact server preview, damaged-goods history, debt write-offs, retained-credit offsets and checkout redemption, full payment/delivery reversals with reviewed replacements, bulk catalogue preview/posting, opening-debt name/contact matching and daily employee/owner cash reconciliation.
+
+The homepage, authentication layout, login, team-access signup guidance and owner account-creation form were redesigned. Reports now provide daily trends and period presets, product performance and stock valuation, low-stock queues, debt aging, employee/collector activity, handovers, complete financial breakdowns, print view and filtered CSV datasets. Original entries and source attribution remain preserved.
+
+Verification: **255 tests, 2,997 assertions** pass; PHPStan passes. PHP formatting, TypeScript, frontend lint/format and production build pass. Browser evidence is in `storage/app/qa`. New migrations were applied locally after integrity/restore-checked backups in `storage/app/backups`. Their rollback guards preserve operational history. SQLite table rebuilds explicitly restore the outflow validation triggers. No fabricated new shop transactions were posted by this work. A real shop pilot, physical printer test and PostgreSQL validation remain outstanding. Live STK Push remains deferred.
+
+
+## User guide for staff and the owner
+
+Share the [printable PDF user guide](docs/user-guide/Kaura-Hardware-User-Guide.pdf), or customize the [editable Word copy](docs/user-guide/Kaura-Hardware-User-Guide.docx). A [browser-readable copy](docs/user-guide/Kaura-Hardware-User-Guide.html) is also included. The 14-section guide covers the grouped menus, mobile cart, daily sales/payments, owner reviews, stock, returns, cash handover, reports and troubleshooting. Complete the website and help-contact fields on the first page before distribution.
